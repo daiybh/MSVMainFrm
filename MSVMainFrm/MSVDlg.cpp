@@ -37,6 +37,7 @@ void CMSVDlg::SetExePath(CString strExePath)
 {
 	m_strExePath = strExePath;
 }
+
 BOOL CMSVDlg::StartWork()
 {
 	if(m_bIsLoad)
@@ -68,79 +69,6 @@ BOOL CMSVDlg::StartWork()
 	return TRUE;
 }
 // CMSVDlg 消息处理程序
-HWND CMSVDlg::GetWndByPID(DWORD dwProcessID)  
-{  
-	HWND hWnd = NULL;
-	DWORD dwPID,dwThreadID;  
-	HWND hParentWnd;   
-	HWND hOldWnd = NULL;
-	//获取窗体列表中的第一个窗口  
-	CWnd *pWnd = FindWindow( NULL, NULL );  
-	//遍历窗口列表  
-	while( NULL != pWnd )  
-	{  
-		//通过窗口句柄m_hWnd获取进程PID  
-		dwThreadID = GetWindowThreadProcessId( pWnd->GetSafeHwnd(), &dwPID );  
-		if( 0 != dwThreadID && dwProcessID == dwPID )  
-		{  
-			hParentWnd = ::GetParent(pWnd->GetSafeHwnd());  
-			TCHAR szText[MAX_PATH] = {0};  
-			::GetWindowText(hParentWnd , szText ,MAX_PATH); 
-
-			if (::IsWindowVisible(hParentWnd))  
-			{  
-				while (hParentWnd)  
-				{  
-					//取得最顶层窗口  
-					hWnd = hParentWnd;  
-					hParentWnd = ::GetParent(hWnd);  
-					if (!(::IsWindowVisible(hParentWnd)))  
-					{  
-						break;  
-					}  
-				}  
-				if (szText[0] != 0 )  
-				{  
-					break;  
-				}  
-			}  
-			else if (wcscmp(szText,_T("")) == 0) //如果已经SW_HIDE,则用上层的句柄
-			{
-				hWnd = hOldWnd;
-				break;
-			}
-			hOldWnd = hParentWnd;
-		}  
-		pWnd = pWnd->GetNextWindow();  
-	}  
-	return hWnd;
-}  
-HWND CMSVDlg::CreateProcessEx(CString strExePath,CRect &rect)
-{
-	HWND  hExeWnd = NULL;
-	STARTUPINFO sa = {0};
-	sa.cb = sizeof(STARTUPINFO);
-	sa.dwX= rect.left;
-	sa.dwY= rect.top;
-	sa.dwXSize=rect.Width();
-	sa.dwYSize=rect.Height();
-	sa.wShowWindow=SW_HIDE;
-	sa.dwFlags=STARTF_USEPOSITION | STARTF_USESIZE;            //設置了窗口坐标位置，窗口大小标志位有效，但是进程
-   
-
-	PROCESS_INFORMATION pi = {0};
-	if(CreateProcess(strExePath,NULL,NULL,NULL,\
-		FALSE,CREATE_NEW_PROCESS_GROUP,NULL,NULL,&sa,&pi))
-	{
-		if(WaitForInputIdle(pi.hProcess,INFINITE) == 0)
-		{
-			hExeWnd = GetWndByPID(pi.dwProcessId);                //通過GetWindowThreadProcessId()对比 dwPid,能成功；但是返回的窗口句柄 （HWND)错误，用调试语句 ::SetWindowText(hWnd,_T("1111111"));無法設置窗口標題
-			CloseHandle(pi.hThread);
-			CloseHandle(pi.hProcess);                                     
-		}
-	}
-	return hExeWnd;
-}
 void CMSVDlg::OnClose()
 {
 	 this->ShowWindow(SW_HIDE);
