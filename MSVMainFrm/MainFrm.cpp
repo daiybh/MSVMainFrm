@@ -48,10 +48,7 @@ CMainFrame::CMainFrame()
 	// TODO: 在此添加成员初始化代码
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2005);
 
-	for (int n=0;n<8;n++)
-	{
-		m_lpMSVDlg[n] = NULL;
-	}
+
 
 
 	//m_lpMLMSV = NULL; 
@@ -440,45 +437,11 @@ void CMainFrame::OnCommandSDI(UINT nID)
 
 
 
-void CMainFrame::CreateMSVDlg(int nChanCount)
-{
-	for (int n=0;n<nChanCount;n++)
-	{
-		if(m_lpMSVDlg[n] == NULL)
-		{
-			m_lpMSVDlg[n] = new CMSVDlg();
-
-			//	pDlg->Create(IDD_MSVDLG,);
-			m_lpMSVDlg[n] ->Create(IDD_MSVDLG,this->GetActiveView());
-
-			::SetParent(m_lpMSVDlg[n]->m_hWnd,this->GetActiveView()->m_hWnd);
-			m_lpMSVDlg[n]->ShowWindow(SW_HIDE);
-		}
-	}
-	//AdjustLayout(nChanCount);
-}
 
 void CMainFrame::StartWork(DWORD dwItmeData)
 {
-	if(dwItmeData<1)return;
-	MSVInfoData *lpMSVInfo =NULL;
-	if(dwItmeData >0)
-	{
-		lpMSVInfo = (MSVInfoData*)dwItmeData;
-	}
-	  int n=0;
-	 if(m_lpMSVDlg[0]==NULL)
-		 	CreateMSVDlg(4);
-	  for (;n<4;n++)
-	  {
-		  if(!m_lpMSVDlg[n]->IsWindowVisible())
-		  {
-              m_lpMSVDlg[n]->SetExePath(lpMSVInfo->strExePath);
-			  m_lpMSVDlg[n]->StartWork();
-              m_lpMSVDlg[n]->ShowWindow(SW_SHOW);
-			  break;
-		  }
-	  }
+	m_ChildProcessMan.setParentWnd(this->GetActiveView());
+	m_ChildProcessMan.StartWork(dwItmeData);
 }
 //-----------------------------------------------------------
 // 函数名称：

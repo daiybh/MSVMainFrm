@@ -8,7 +8,14 @@
 #include "ClassView.h"
 #include "MSVDlg.h"
 #include "OutputWnd.h"
+#include "ChildProcessMan.h"
+class CChildProcess
+{
+public:
+protected:
+private:
 
+};
 class CMainFrame : public CFrameWndEx
 {
 	
@@ -18,7 +25,6 @@ protected: // 仅从序列化创建
 
 // 属性
 public:
-      CMSVDlg *m_lpMSVDlg[8];
 // 操作
 public:
 	void CreateMSVDlg(int nChanCount);
@@ -45,9 +51,8 @@ protected:  // 控件条嵌入成员
 	CMFCToolBarImages m_UserImages;
 	CFileView         m_wndFileView;
 	CClassView        m_wndClassView;
-//	CChildView        m_wndView;
 	COutputWnd        m_wndOutput;
-
+	CChildAttachDialogMan	  m_ChildProcessMan;
 // 生成的消息映射函数
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
