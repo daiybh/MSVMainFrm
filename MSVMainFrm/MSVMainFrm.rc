@@ -79,6 +79,8 @@ IDI_FILE_VIEW           ICON                    "res\\file_view.ico"
 IDI_FILE_VIEW_HC        ICON                    "res\\file_view_hc.ico"
 IDI_CLASS_VIEW          ICON                    "res\\class_view.ico"
 IDI_CLASS_VIEW_HC       ICON                    "res\\class_view_hc.ico"
+IDI_OUTPUT_WND          ICON         "res\\output_wnd.ico"
+IDI_OUTPUT_WND_HC       ICON         "res\\output_wnd_hc.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -237,6 +239,16 @@ BEGIN
     END
 END
 
+IDR_OUTPUT_POPUP MENU
+BEGIN
+    POPUP "弹出项"
+    BEGIN
+        MENUITEM "复制(&C)",                       ID_EDIT_COPY
+        MENUITEM "清除(&C)",                      ID_EDIT_CLEAR
+        MENUITEM SEPARATOR
+        MENUITEM "隐藏(&H)",                       ID_VIEW_OUTPUTWND
+    END
+END
 IDR_THEME_MENU MENU 
 BEGIN
     MENUITEM "Office 2007 (蓝色样式)(&B)",      ID_VIEW_APPLOOK_OFF_2007_BLUE
@@ -462,6 +474,10 @@ END
 STRINGTABLE 
 BEGIN
     IDS_EXPLORER            "资源管理器"
+	IDS_OUTPUT_WND          "输出"
+	IDS_BUILD_TAB           "生成"
+	IDS_DEBUG_TAB           "调试"
+	IDS_FIND_TAB            "查找"
     IDS_EDIT_MENU           "编辑"
 END
 

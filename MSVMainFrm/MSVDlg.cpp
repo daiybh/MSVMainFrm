@@ -57,13 +57,13 @@ BOOL CMSVDlg::StartWork()
 	cWnd->ModifyStyle(WS_CAPTION,0);
 	//“˛≤ÿ±ﬂøÚ
 	cWnd->ModifyStyle(WS_THICKFRAME,1);
-    
+
+	m_bIsLoad = TRUE;
 	AdjustLayout();
 
 	//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
 	//œ‘ æ∂‘ª∞øÚ
     ::SetParent(m_hExeWnd,m_hWnd);
-    m_bIsLoad = TRUE;
 
 	return TRUE;
 }
@@ -117,7 +117,6 @@ HWND CMSVDlg::GetWndByPID(DWORD dwProcessID)
 }  
 HWND CMSVDlg::CreateProcessEx(CString strExePath,CRect &rect)
 {
-
 	HWND  hExeWnd = NULL;
 	STARTUPINFO sa = {0};
 	sa.cb = sizeof(STARTUPINFO);
@@ -149,7 +148,7 @@ void CMSVDlg::OnClose()
 }
 void CMSVDlg::AdjustLayout()
 {
-	if(GetSafeHwnd() == NULL)
+	if(!m_bIsLoad || GetSafeHwnd() == NULL)
 		return;
 	CRect rect;
 	GetClientRect(rect);

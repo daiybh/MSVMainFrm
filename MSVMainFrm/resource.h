@@ -33,12 +33,16 @@
 #define ID_SORTING_SORTALPHABETIC       146
 #define ID_SORTING_SORTBYTYPE           147
 #define ID_SORTING_SORTBYACCESS         148
+#define ID_VIEW_OUTPUTWND			149
 #define IDS_MSV_SDI                     155
 #define IDS_MSV_IP                      156
+#define IDS_OUTPUT_WND				157
 #define IDI_FILE_VIEW                   161
 #define IDI_FILE_VIEW_HC                162
 #define IDI_CLASS_VIEW                  163
 #define IDI_CLASS_VIEW_HC               164
+#define IDI_OUTPUT_WND				165
+#define IDI_OUTPUT_WND_HC			166
 #define IDR_EXPLORER                    169
 #define IDB_EXPLORER_24                 170
 #define IDR_SORT                        171
@@ -52,6 +56,7 @@
 #define IDR_MENU_IMAGES                 179
 #define IDB_MENU_IMAGES_24              180
 #define ID_TOOLS_MACRO                  181
+#define IDR_OUTPUT_POPUP			182
 #define IDS_CLOSE                       195
 #define IDR_THEME_MENU                  200
 #define ID_SET_STYLE                    201
@@ -64,6 +69,9 @@
 #define ID_VIEW_APPLOOK_OFF_2007_BLACK  216
 #define ID_VIEW_APPLOOK_OFF_2007_SILVER 217
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   218
+#define IDS_BUILD_TAB				300
+#define IDS_DEBUG_TAB				301
+#define IDS_FIND_TAB				302
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDD_MSVDLG                      310

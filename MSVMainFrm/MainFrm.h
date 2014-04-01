@@ -7,6 +7,7 @@
 #include "FileView.h"
 #include "ClassView.h"
 #include "MSVDlg.h"
+#include "OutputWnd.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -46,6 +47,7 @@ protected:  // 控件条嵌入成员
 	CFileView         m_wndFileView;
 	CClassView        m_wndClassView;
 	CChildView        m_wndView;
+	COutputWnd        m_wndOutput;
 
 // 生成的消息映射函数
 protected:
@@ -66,7 +68,6 @@ public:
 	afx_msg BOOL OnCloseDockingPane(CDockablePane* pWnd);
 	afx_msg void OnCommandSDI(UINT nID);
 	afx_msg LRESULT OnMsvInfoUpdate(WPARAM wp,LPARAM lp);
-	afx_msg void On32772();
 };
 
 

@@ -31,7 +31,6 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_SIZE()
 	ON_WM_SIZING()
 	ON_WM_MOVE()
-	ON_COMMAND(ID_32772, &CMainFrame::On32772)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -137,6 +136,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	DockPane(&m_wndFileView);
 	CDockablePane* pTabbedBar = NULL;
 	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, FALSE, &pTabbedBar);
+	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&m_wndOutput);
 
 //	CreateMSVDlg(4);
 
@@ -228,6 +229,16 @@ BOOL CMainFrame::CreateDockingWindows()
 		return FALSE; // 未能创建
 	}
 
+	// 创建输出窗口
+	CString strOutputWnd;
+	bNameValid = strOutputWnd.LoadString(IDS_OUTPUT_WND);
+	ASSERT(bNameValid);
+	if (!m_wndOutput.Create(strOutputWnd, this, CRect(0, 0, 100, 100), TRUE, ID_VIEW_OUTPUTWND, WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_BOTTOM | CBRS_FLOAT_MULTI))
+	{
+		TRACE0("未能创建输出窗口\n");
+		return FALSE; // 未能创建
+	}
+
 	SetDockingWindowIcons(theApp.m_bHiColorIcons);
 	return TRUE;
 }
@@ -239,6 +250,9 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 
 	HICON hClassViewIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_CLASS_VIEW_HC : IDI_CLASS_VIEW), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
 	m_wndClassView.SetIcon(hClassViewIcon, FALSE);
+
+	HICON hOutputBarIcon = (HICON) ::LoadImage(::AfxGetResourceHandle(), MAKEINTRESOURCE(bHiColorIcons ? IDI_OUTPUT_WND_HC : IDI_OUTPUT_WND), IMAGE_ICON, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON), 0);
+	m_wndOutput.SetIcon(hOutputBarIcon, FALSE);
 
 }
 
@@ -500,9 +514,11 @@ void CMainFrame::CreateMSVDlg(int nChanCount)
 		if(m_lpMSVDlg[n] == NULL)
 		{
 			m_lpMSVDlg[n] = new CMSVDlg();
-			m_lpMSVDlg[n] ->Create(IDD_MSVDLG,this);
 
-			::SetParent(m_lpMSVDlg[n]->m_hWnd,m_hWnd);
+			//	pDlg->Create(IDD_MSVDLG,);
+			m_lpMSVDlg[n] ->Create(IDD_MSVDLG,this->GetActiveView());
+
+			::SetParent(m_lpMSVDlg[n]->m_hWnd,this->GetActiveView()->m_hWnd);
 			m_lpMSVDlg[n]->ShowWindow(SW_HIDE);
 		}
 	}
@@ -549,10 +565,4 @@ LRESULT CMainFrame::OnMsvInfoUpdate(WPARAM wp,LPARAM lp)
 // 		m_lpMLMSV->ShowMaterialInfo(wp,lp);
 // 	}
 	return S_OK;
-}
-void CMainFrame::On32772()
-{
-	// TODO: 在此添加命令处理程序代码
-	CMSVDlg dlg;
-	dlg.DoModal();
 }

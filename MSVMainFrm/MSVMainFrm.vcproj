@@ -226,6 +226,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OutputWnd.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 				<FileConfiguration
@@ -293,6 +297,10 @@
 			</File>
 			<File
 				RelativePath=".\MSVMainFrmView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OutputWnd.h"
 				>
 			</File>
 			<File
