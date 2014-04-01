@@ -180,16 +180,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
-
-	return 0;
 	CFrameWndEx::EnableLoadDockState(FALSE) ;
-// 	if(m_lpMLMSV == NULL)
-// 	{
-//        m_lpMLMSV = new CMaterialMSV(&m_wndView);
-// 	   ASSERT(m_lpMLMSV != NULL);
-// 
-// 	   m_lpMLMSV->StartWork(_T("C:\\localidx"));
-// 	}
 	return 0;
 }
 
@@ -414,9 +405,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 void CMainFrame::OnSize(UINT nType, int cx, int cy)
 {
-	CFrameWndEx::OnSize(nType, cx, cy);
-      //  AdjustLayout(4);
- 
+	CFrameWndEx::OnSize(nType, cx, cy); 
 }
 
 void CMainFrame::OnSizing(UINT fwSide, LPRECT pRect)
@@ -450,62 +439,6 @@ void CMainFrame::OnCommandSDI(UINT nID)
 }
 
 
-void CMainFrame::AdjustLayout(int nChanCount)
-{
-	if (GetSafeHwnd() == NULL)
-	{
-		return;
-	}
-	for (int n=0;n<nChanCount;n++)
-	{
-		if(m_lpMSVDlg[n] == NULL)
-			return;
-	}
-
-
-	CRect rect1;
-	CRect rect;
-	m_wndView.GetClientRect(rect);
-	m_wndFileView.GetClientRect(rect1);
-	rect.left = rect1.Width()+12;
-	rect.top  += 25 ;
-
-	int  nAveWidth  = rect.Width()/(nChanCount/2);
-	int  nAveHeight = rect.Height()/(nChanCount/2);
-	CRect rectdst;
-	switch (nChanCount)
-	{
-	case 4:
-
-		//1
-		rectdst.top = rect.top;
-		rectdst.left = rect.left;
-		rectdst.right = rect.left+nAveWidth;
-		rectdst.bottom = rect.top + nAveHeight;
-		m_lpMSVDlg[0]->SetWindowPos(NULL, rectdst.left, rectdst.top, rectdst.Width(), rectdst.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-		//2
-		rectdst.top = rect.top;
-		rectdst.left = rectdst.right;
-		rectdst.right = rect.right;
-		rectdst.bottom = rect.top + nAveHeight;
-		m_lpMSVDlg[1]->SetWindowPos(NULL, rectdst.left, rectdst.top, rectdst.Width(), rectdst.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-		//3
-		rectdst.top = rectdst.bottom ;
-		rectdst.left = rect.left;
-		rectdst.right = rect.left+nAveWidth;
-		rectdst.bottom = rect.bottom;
-		m_lpMSVDlg[2]->SetWindowPos(NULL, rectdst.left, rectdst.top, rectdst.Width(), rectdst.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-		//4
-		rectdst.top = rectdst.top ;
-		rectdst.left = rectdst.right;
-		rectdst.right = rect.right;
-		rectdst.bottom = rect.bottom;
-		m_lpMSVDlg[3]->SetWindowPos(NULL, rectdst.left, rectdst.top, rectdst.Width(), rectdst.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
-		break;
-	case 8:
-		break;
-	}
-}
 
 void CMainFrame::CreateMSVDlg(int nChanCount)
 {

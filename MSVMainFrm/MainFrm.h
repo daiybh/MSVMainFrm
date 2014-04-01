@@ -22,7 +22,6 @@ public:
 // 操作
 public:
 	void CreateMSVDlg(int nChanCount);
-	void AdjustLayout(int nChanCount);
 
 	void StartWork(DWORD dwItmeData);
 // 重写
@@ -46,7 +45,7 @@ protected:  // 控件条嵌入成员
 	CMFCToolBarImages m_UserImages;
 	CFileView         m_wndFileView;
 	CClassView        m_wndClassView;
-	CChildView        m_wndView;
+//	CChildView        m_wndView;
 	COutputWnd        m_wndOutput;
 
 // 生成的消息映射函数
