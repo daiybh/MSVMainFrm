@@ -41,14 +41,7 @@ void CMSVDlg::SetExePath(CString strExePath)
 BOOL CMSVDlg::StartWork()
 {
 
-	if(m_bIsLoad)
-	{
-		ShowWindow(SW_SHOW);
-		return TRUE;
-	}
-	AttachExeToWnd(m_strExePath,m_hWnd);
-	m_bIsLoad = TRUE;
-	AdjustLayout();
+	return AttachExeToWnd(m_strExePath,m_hWnd);	
 }
 // CMSVDlg 消息处理程序
 void CMSVDlg::OnClose()
@@ -56,22 +49,7 @@ void CMSVDlg::OnClose()
 	 this->ShowWindow(SW_HIDE);
 	//CDialog::OnClose();
 }
-void CMSVDlg::AdjustLayout()
-{
-	if(!m_bIsLoad || GetSafeHwnd() == NULL)
-		return;
-	CRect rect;
-	GetClientRect(rect);
-   	CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
 
-	cWnd->GetClientRect(m_exeRect);
-	if(m_exeRect.IsRectNull())
-		cWnd->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), 0);
-	else
-	{
-		SetWindowPos(NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+1, m_exeRect.Height()+10, 0);
-	}
-}
 void CMSVDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);

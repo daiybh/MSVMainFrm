@@ -382,6 +382,20 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 void CMainFrame::StartWork(DWORD dwItmeData)
 {
+	theApp.OnOpen();
+	//theApp.OnNew();
+/*
+	
+	CDocument *pNewDoc = new CMSVMainFrmDoc();
+
+	POSITION tplPos = AfxGetApp()->GetFirstDocTemplatePosition();
+	CDocTemplate *pDocTpl = AfxGetApp()->GetNextDocTemplate(tplPos);
+	CChildFrame *pNewChWnd = (CChildFrame*)(pDocTpl->CreateNewFrame(pNewDoc,NULL));
+	pNewChWnd->SetTitle(_T("windows title"));
+	pNewChWnd->ShowWindow(SW_SHOWNORMAL);
+	pNewChWnd->SetFocus();
+	/**/
+	return;
 	CWnd *pWnd = this->GetActiveView();
 	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
 	m_ChildProcessMan.StartWork(dwItmeData);

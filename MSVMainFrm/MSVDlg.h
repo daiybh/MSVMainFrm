@@ -5,6 +5,9 @@
 
 class CCreateProcessWnd{
 public:
+	CCreateProcessWnd(){
+		m_bIsLoad= FALSE;
+	}
 	HWND CreateProcessEx(CString strExePath,CRect &rect)
 	{
 		HWND  hExeWnd = NULL;
@@ -58,6 +61,11 @@ public:
 
 	BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hParentWnd)
 	{
+		if(m_bIsLoad)
+		{
+			ShowWindow(m_hParentWnd,SW_SHOW);
+			return TRUE;
+		}
 		CRect rect;
 		GetClientRect(hParentWnd,rect);
 		m_hExeWnd=CreateProcessEx(lpExePath,rect);
@@ -74,11 +82,30 @@ public:
 		//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
 		//显示对话框
 		::SetParent(m_hExeWnd,hParentWnd);
-
+		m_bIsLoad=TRUE;
+		m_hParentWnd = hParentWnd;
+		AdjustLayout();
 		return TRUE;
 	}
-
+	void AdjustLayout()
+	{
+		if(!m_bIsLoad)
+			return;
+		CRect rect;
+		GetClientRect(m_hParentWnd,rect);
+		CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
+		CRect m_exeRect;
+		cWnd->GetClientRect(m_exeRect);
+		if(m_exeRect.IsRectNull())
+			cWnd->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), 0);
+		else
+		{
+			SetWindowPos(m_hParentWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+1, m_exeRect.Height()+10, 0);
+		}
+	}
 	HWND    m_hExeWnd;
+	HWND	m_hParentWnd;
+	BOOL    m_bIsLoad;
 };
 class CMSVDlg : public CDialog,CCreateProcessWnd
 {
@@ -86,7 +113,6 @@ class CMSVDlg : public CDialog,CCreateProcessWnd
 public:
 	void SetExePath(CString strExePath);
 	BOOL StartWork();
-	void AdjustLayout();
 protected:
 public:
 	CMSVDlg(CWnd* pParent = NULL);   // 标准构造函数
@@ -102,7 +128,6 @@ protected:
 private:
 	CString m_strExePath;
 	CRect   m_exeRect;
-	BOOL    m_bIsLoad;
 public:
 	afx_msg void OnClose();
 	afx_msg void OnSize(UINT nType, int cx, int cy);

@@ -27,6 +27,8 @@ public:
 // й╣ож
 	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
+	void OnNew(){this->OnFileNew();};
+	void OnOpen(){this->OnFileOpen();};
 
 	virtual void PreLoadState();
 	virtual void LoadCustomState();

@@ -36,9 +36,10 @@ BOOL CMSVMainFrmDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-AfxMessageBox(_T("CMSVMainFrmDoc::OnNewDocument"));
 	// TODO: 在此添加重新初始化代码
 	// (SDI 文档将重用该文档)
+	AfxMessageBox(GetTitle());
+	SetTitle(L"OnNewDocument");
 	return TRUE;
 }
 
@@ -76,3 +77,13 @@ void CMSVMainFrmDoc::Dump(CDumpContext& dc) const
 
 
 // CMSVMainFrmDoc 命令
+
+BOOL CMSVMainFrmDoc::OnOpenDocument(LPCTSTR lpszPathName)
+{
+	if (!CDocument::OnOpenDocument(lpszPathName))
+		return FALSE;
+AfxMessageBox(lpszPathName);
+	// TODO:  在此添加您专用的创建代码
+
+	return TRUE;
+}

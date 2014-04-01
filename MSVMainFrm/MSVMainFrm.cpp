@@ -111,6 +111,8 @@ BOOL CMSVMainFrmApp::InitInstance()
 	// 分析标准外壳命令、DDE、打开文件操作的命令行
 	CCommandLineInfo cmdInfo;
 	ParseCommandLine(cmdInfo);
+	if(cmdInfo.m_nShellCommand == CCommandLineInfo::FileNew)
+		cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 
 
 	// 调度在命令行中指定的命令。如果
