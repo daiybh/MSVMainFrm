@@ -13,24 +13,19 @@
 
 // CMainFrame
 
-IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
+IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
 
 const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
 
-BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
+BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_WM_CREATE()
-	ON_WM_SETFOCUS()
+	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
-	ON_COMMAND_RANGE(155,156,OnCommandSDI)
-	ON_MESSAGE(MSVINFO_DBCLICK,OnMsvInfoUpdate)
-	ON_WM_SIZE()
-	ON_WM_SIZING()
-	ON_WM_MOVE()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -47,11 +42,6 @@ CMainFrame::CMainFrame()
 {
 	// TODO: 在此添加成员初始化代码
 	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2005);
-
-
-
-
-	//m_lpMLMSV = NULL; 
 }
 
 CMainFrame::~CMainFrame()
@@ -60,7 +50,7 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
+	if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
 	BOOL bNameValid;
@@ -132,11 +122,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFileView);
 	CDockablePane* pTabbedBar = NULL;
-	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, FALSE, &pTabbedBar);
+	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 
-//	CreateMSVDlg(4);
+
+	// 启用增强的窗口管理对话框
+	EnableWindowsDialog(ID_WINDOW_MANAGER, IDS_WINDOWS_MANAGER, TRUE);
 
 	// 启用工具栏和停靠窗口菜单替换
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
@@ -158,6 +150,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// TODO: 定义您自己的基本命令，确保每个下拉菜单至少有一个基本命令。
 	CList<UINT, UINT> lstBasicCommands;
 
+	lstBasicCommands.AddTail(ID_FILE_NEW);
+	lstBasicCommands.AddTail(ID_FILE_OPEN);
+	lstBasicCommands.AddTail(ID_FILE_SAVE);
+	lstBasicCommands.AddTail(ID_FILE_PRINT);
 	lstBasicCommands.AddTail(ID_APP_EXIT);
 	lstBasicCommands.AddTail(ID_EDIT_CUT);
 	lstBasicCommands.AddTail(ID_EDIT_PASTE);
@@ -177,19 +173,17 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
-	CFrameWndEx::EnableLoadDockState(FALSE) ;
+
 	return 0;
 }
 
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if( !CFrameWndEx::PreCreateWindow(cs) )
+	if( !CMDIFrameWndEx::PreCreateWindow(cs) )
 		return FALSE;
 	// TODO: 在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
 
-	cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
-	cs.lpszClass = AfxRegisterWndClass(0);
 	return TRUE;
 }
 
@@ -249,32 +243,21 @@ void CMainFrame::SetDockingWindowIcons(BOOL bHiColorIcons)
 #ifdef _DEBUG
 void CMainFrame::AssertValid() const
 {
-	CFrameWndEx::AssertValid();
+	CMDIFrameWndEx::AssertValid();
 }
 
 void CMainFrame::Dump(CDumpContext& dc) const
 {
-	CFrameWndEx::Dump(dc);
+	CMDIFrameWndEx::Dump(dc);
 }
 #endif //_DEBUG
 
 
 // CMainFrame 消息处理程序
 
-void CMainFrame::OnSetFocus(CWnd* /*pOldWnd*/)
+void CMainFrame::OnWindowManager()
 {
-	// 将焦点前移到视图窗口
-	//m_wndView.SetFocus();
-}
-
-BOOL CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
-{
-	// 让视图第一次尝试该命令
-//	if (m_wndView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-//		return TRUE;
-
-	// 否则，执行默认处理
-	return CFrameWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+	ShowWindowsDialog();
 }
 
 void CMainFrame::OnViewCustomize()
@@ -286,7 +269,7 @@ void CMainFrame::OnViewCustomize()
 
 LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 {
-	LRESULT lres = CFrameWndEx::OnToolbarCreateNew(wp,lp);
+	LRESULT lres = CMDIFrameWndEx::OnToolbarCreateNew(wp,lp);
 	if (lres == 0)
 	{
 		return 0;
@@ -373,14 +356,11 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 {
 	// 基类将执行真正的工作
 
-	if (!CFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
+	if (!CMDIFrameWndEx::LoadFrame(nIDResource, dwDefaultStyle, pParentWnd, pContext))
 	{
 		return FALSE;
 	}
 
-	CWinApp* pApp = AfxGetApp();
-	if (pApp->m_pMainWnd == NULL)
-		pApp->m_pMainWnd = this;
 
 	// 为所有用户工具栏启用自定义按钮
 	BOOL bNameValid;
@@ -400,65 +380,9 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	return TRUE;
 }
 
-void CMainFrame::OnSize(UINT nType, int cx, int cy)
-{
-	CFrameWndEx::OnSize(nType, cx, cy); 
-}
-
-void CMainFrame::OnSizing(UINT fwSide, LPRECT pRect)
-{
-	CFrameWndEx::OnSizing(fwSide, pRect);
-
-}
-
-void CMainFrame::OnMove(int x, int y)
-{
-	CFrameWndEx::OnMove(x, y);
- 
-	// TODO: 在此处添加消息处理程序代码
-}
-BOOL CMainFrame::OnCloseDockingPane(CDockablePane* pWnd)
-{
-     
-	 return TRUE;
-}
-void CMainFrame::OnCommandSDI(UINT nID)
-{
-	switch(nID)
-	{
-	case IDS_MSV_SDI:
-		m_wndFileView.ShowPane(TRUE,FALSE,TRUE);
-		break;
-	case IDS_MSV_IP:
-		m_wndClassView.ShowPane(TRUE,FALSE,TRUE);
-		break;
-	}
-}
-
-
-
-
 void CMainFrame::StartWork(DWORD dwItmeData)
 {
-	m_ChildProcessMan.setParentWnd(this->GetActiveView());
+	CWnd *pWnd = this->GetActiveView();
+	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
 	m_ChildProcessMan.StartWork(dwItmeData);
-}
-//-----------------------------------------------------------
-// 函数名称：
-//     
-// 参数：
-//    - 
-// 返回：
-//     
-// 说明：
-//     
-//-----------------------------------------------------------
-
-LRESULT CMainFrame::OnMsvInfoUpdate(WPARAM wp,LPARAM lp)
-{
-// 	if(m_lpMLMSV != NULL)
-// 	{
-// 		m_lpMLMSV->ShowMaterialInfo(wp,lp);
-// 	}
-	return S_OK;
 }

@@ -19,17 +19,12 @@ class CMSVMainFrmApp : public CWinAppEx
 public:
 	CMSVMainFrmApp();
 
-protected:
-	CMultiDocTemplate* m_pDocTemplate;
-public:
 
 // ÷ÿ–¥
 public:
 	virtual BOOL InitInstance();
 
 //  µœ÷
-
-public:
 	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
 
@@ -38,8 +33,6 @@ public:
 	virtual void SaveCustomState();
 
 	afx_msg void OnAppAbout();
-	afx_msg void OnFileNewFrame();
-	afx_msg void OnFileNew();
 	DECLARE_MESSAGE_MAP()
 };
 

@@ -3,6 +3,7 @@
 // Used by MSVMainFrm.rc
 //
 #define IDD_ABOUTBOX                    100
+#define IDD_MSVMAINFRM_FORM			101
 #define IDP_OLE_INIT_FAILED             100
 #define IDR_POPUP_EDIT                  119
 #define ID_STATUSBAR_PANE1              120
@@ -36,6 +37,8 @@
 #define ID_VIEW_OUTPUTWND			149
 #define IDS_MSV_SDI                     155
 #define IDS_MSV_IP                      156
+#define IDS_FILE_VIEW				158
+#define IDS_CLASS_VIEW				159
 #define IDS_OUTPUT_WND				157
 #define IDI_FILE_VIEW                   161
 #define IDI_FILE_VIEW_HC                162

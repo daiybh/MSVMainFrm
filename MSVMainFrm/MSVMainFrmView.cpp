@@ -15,14 +15,15 @@
 
 // CMSVMainFrmView
 
-IMPLEMENT_DYNCREATE(CMSVMainFrmView, CView)
+IMPLEMENT_DYNCREATE(CMSVMainFrmView, CFormView)
 
-BEGIN_MESSAGE_MAP(CMSVMainFrmView, CView)
+BEGIN_MESSAGE_MAP(CMSVMainFrmView, CFormView)
 END_MESSAGE_MAP()
 
 // CMSVMainFrmView 构造/析构
 
 CMSVMainFrmView::CMSVMainFrmView()
+	: CFormView(CMSVMainFrmView::IDD)
 {
 	// TODO: 在此处添加构造代码
 
@@ -32,24 +33,25 @@ CMSVMainFrmView::~CMSVMainFrmView()
 {
 }
 
+void CMSVMainFrmView::DoDataExchange(CDataExchange* pDX)
+{
+	CFormView::DoDataExchange(pDX);
+}
+
 BOOL CMSVMainFrmView::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: 在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
 
-	return CView::PreCreateWindow(cs);
+	return CFormView::PreCreateWindow(cs);
 }
 
-// CMSVMainFrmView 绘制
-
-void CMSVMainFrmView::OnDraw(CDC* /*pDC*/)
+void CMSVMainFrmView::OnInitialUpdate()
 {
-	CMSVMainFrmDoc* pDoc = GetDocument();
-	ASSERT_VALID(pDoc);
-	if (!pDoc)
-		return;
-
-	// TODO: 在此处为本机数据添加绘制代码
+	CFormView::OnInitialUpdate();
+	ResizeParentToFit();
+	CString xx = _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
+	AttachExeToWnd(xx,m_hWnd);
 }
 
 void CMSVMainFrmView::OnRButtonUp(UINT nFlags, CPoint point)
@@ -69,12 +71,12 @@ void CMSVMainFrmView::OnContextMenu(CWnd* pWnd, CPoint point)
 #ifdef _DEBUG
 void CMSVMainFrmView::AssertValid() const
 {
-	CView::AssertValid();
+	CFormView::AssertValid();
 }
 
 void CMSVMainFrmView::Dump(CDumpContext& dc) const
 {
-	CView::Dump(dc);
+	CFormView::Dump(dc);
 }
 
 CMSVMainFrmDoc* CMSVMainFrmView::GetDocument() const // 非调试版本是内联的

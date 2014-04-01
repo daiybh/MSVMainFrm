@@ -55,6 +55,30 @@ public:
 		EnumWindows(&CCreateProcessWnd::lpEnumFunc,reinterpret_cast<LPARAM>(&arg));
 		return arg.hWnd;		
 	}  
+
+	BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hParentWnd)
+	{
+		CRect rect;
+		GetClientRect(hParentWnd,rect);
+		m_hExeWnd=CreateProcessEx(lpExePath,rect);
+
+		if(m_hExeWnd == NULL)
+		{
+			return FALSE;
+		}
+		CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
+		//“˛≤ÿ±ÍÃ‚¿∏
+		cWnd->ModifyStyle(WS_CAPTION,0);
+		//“˛≤ÿ±ﬂøÚ
+		cWnd->ModifyStyle(WS_THICKFRAME,1);
+		//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
+		//œ‘ æ∂‘ª∞øÚ
+		::SetParent(m_hExeWnd,hParentWnd);
+
+		return TRUE;
+	}
+
+	HWND    m_hExeWnd;
 };
 class CMSVDlg : public CDialog,CCreateProcessWnd
 {
@@ -77,7 +101,6 @@ protected:
 	DECLARE_MESSAGE_MAP()
 private:
 	CString m_strExePath;
-	HWND    m_hExeWnd;
 	CRect   m_exeRect;
 	BOOL    m_bIsLoad;
 public:

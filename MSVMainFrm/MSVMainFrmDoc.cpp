@@ -36,10 +36,9 @@ BOOL CMSVMainFrmDoc::OnNewDocument()
 {
 	if (!CDocument::OnNewDocument())
 		return FALSE;
-
+AfxMessageBox(_T("CMSVMainFrmDoc::OnNewDocument"));
 	// TODO: 在此添加重新初始化代码
 	// (SDI 文档将重用该文档)
-
 	return TRUE;
 }
 

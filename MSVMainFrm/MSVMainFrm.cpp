@@ -7,6 +7,7 @@
 #include "MSVMainFrm.h"
 #include "MainFrm.h"
 
+#include "ChildFrm.h"
 #include "MSVMainFrmDoc.h"
 #include "MSVMainFrmView.h"
 
@@ -19,9 +20,8 @@
 
 BEGIN_MESSAGE_MAP(CMSVMainFrmApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CMSVMainFrmApp::OnAppAbout)
-	ON_COMMAND(ID_FILE_NEW_FRAME, &CMSVMainFrmApp::OnFileNewFrame)
-	ON_COMMAND(ID_FILE_NEW, &CMSVMainFrmApp::OnFileNew)
 	// 基于文件的标准文档命令
+	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 END_MESSAGE_MAP()
 
@@ -84,20 +84,28 @@ BOOL CMSVMainFrmApp::InitInstance()
 	ttParams.m_bVislManagerTheme = TRUE;
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
-//*
+
 	// 注册应用程序的文档模板。文档模板
 	// 将用作文档、框架窗口和视图之间的连接
 	CMultiDocTemplate* pDocTemplate;
-	pDocTemplate = new CMultiDocTemplate(
-		IDR_MAINFRAME,
+	pDocTemplate = new CMultiDocTemplate(IDR_MSVMainFrmTYPE,
 		RUNTIME_CLASS(CMSVMainFrmDoc),
-		RUNTIME_CLASS(CMainFrame),       // 主 SDI 框架窗口
+		RUNTIME_CLASS(CChildFrame), // 自定义 MDI 子框架
 		RUNTIME_CLASS(CMSVMainFrmView));
 	if (!pDocTemplate)
 		return FALSE;
-	m_pDocTemplate = pDocTemplate;
 	AddDocTemplate(pDocTemplate);
 
+	// 创建主 MDI 框架窗口
+	CMainFrame* pMainFrame = new CMainFrame;
+	if (!pMainFrame || !pMainFrame->LoadFrame(IDR_MAINFRAME))
+	{
+		delete pMainFrame;
+		return FALSE;
+	}
+	m_pMainWnd = pMainFrame;
+	// 仅当具有后缀时才调用 DragAcceptFiles
+	//  在 MDI 应用程序中，这应在设置 m_pMainWnd 之后立即发生
 
 
 	// 分析标准外壳命令、DDE、打开文件操作的命令行
@@ -109,22 +117,10 @@ BOOL CMSVMainFrmApp::InitInstance()
 	// 用 /RegServer、/Register、/Unregserver 或 /Unregister 启动应用程序，则返回 FALSE。
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
-/**/
-	// 唯一的一个窗口已初始化，因此显示它并对其进行更新
-	/*
-	CMainFrame* pFrame = new CMainFrame;
-	if (!pFrame)
-		return FALSE;
-	m_pMainWnd = pFrame;
-	// 创建并加载框架及其资源
-	pFrame->LoadFrame(IDR_MAINFRAME,
-		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, NULL,
-		NULL);
-	/**/
-	m_pMainWnd->ShowWindow(SW_SHOW);
-	m_pMainWnd->UpdateWindow();
-	// 仅当具有后缀时才调用 DragAcceptFiles
-	//  在 SDI 应用程序中，这应在 ProcessShellCommand 之后发生
+	// 主窗口已初始化，因此显示它并对其进行更新
+	pMainFrame->ShowWindow(m_nCmdShow);
+	pMainFrame->UpdateWindow();
+
 	return TRUE;
 }
 
@@ -191,81 +187,5 @@ void CMSVMainFrmApp::SaveCustomState()
 
 // CMSVMainFrmApp 消息处理程序
 
-void CMSVMainFrmApp::OnFileNewFrame() 
-{
-	ASSERT(m_pDocTemplate != NULL);
-
-	CDocument* pDoc = NULL;
-	CFrameWnd* pFrame = NULL;
-
-	// 创建由 m_pDocTemplate 成员引用的文档
-	//的新实例。
-	if (m_pDocTemplate != NULL)
-		pDoc = m_pDocTemplate->CreateNewDocument();
-
-	if (pDoc != NULL)
-	{
-		// 如果创建操作正常，则使用它来创建
-		// 该文档的新框架。
-		pFrame = m_pDocTemplate->CreateNewFrame(pDoc, NULL);
-		if (pFrame != NULL)
-		{
-			// 设置标题并初始化该文档。
-			// 如果文档初始化失败，则清理
-			// 此框架窗口和文档。
-
-			m_pDocTemplate->SetDefaultTitle(pDoc);
-			if (!pDoc->OnNewDocument())
-			{
-				pFrame->DestroyWindow();
-				pFrame = NULL;
-			}
-			else
-			{
-				// 否则，将更新此框架
-				m_pDocTemplate->InitialUpdateFrame(pFrame, pDoc, TRUE);
-			}
-		}
-	}
-
-	// 如果失败，则清理该文档，并向
-	// 用户显示消息。
-
-	if (pFrame == NULL || pDoc == NULL)
-	{
-		delete pDoc;
-		AfxMessageBox(AFX_IDP_FAILED_TO_CREATE_DOC);
-	}
-}
-
-void CMSVMainFrmApp::OnFileNew() 
-{
-	CDocument* pDoc = NULL;
-	CFrameWnd* pFrame;
-	pFrame = DYNAMIC_DOWNCAST(CFrameWnd, CWnd::GetActiveWindow());
-	
-	if (pFrame != NULL)
-		pDoc = pFrame->GetActiveDocument();
-
-	if (pFrame == NULL || pDoc == NULL)
-	{
-		// 如果这是第一个文档，则以普通方式创建
-		CWinApp::OnFileNew();
-	}
-	else
-	{
-		// 否则，确定是否需要保存修改，
-		// 然后要求文档自身进行重新初始化。
-		if (!pDoc->SaveModified())
-			return;
-
-		CDocTemplate* pTemplate = pDoc->GetDocTemplate();
-		ASSERT(pTemplate != NULL);
-
-		if (pTemplate != NULL)
-			pTemplate->SetDefaultTitle(pDoc);
-		pDoc->OnNewDocument();
-	}
-}
 
 

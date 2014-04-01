@@ -40,33 +40,15 @@ void CMSVDlg::SetExePath(CString strExePath)
 
 BOOL CMSVDlg::StartWork()
 {
+
 	if(m_bIsLoad)
 	{
 		ShowWindow(SW_SHOW);
 		return TRUE;
 	}
-	CRect rect;
-	GetClientRect(rect);
-    m_hExeWnd=CreateProcessEx(m_strExePath,rect);
-
-	if(m_hExeWnd == NULL)
-	{
-		return FALSE;
-	}
-	CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
-     //隐藏标题栏
-	cWnd->ModifyStyle(WS_CAPTION,0);
-	//隐藏边框
-	cWnd->ModifyStyle(WS_THICKFRAME,1);
-
+	AttachExeToWnd(m_strExePath,m_hWnd);
 	m_bIsLoad = TRUE;
 	AdjustLayout();
-
-	//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
-	//显示对话框
-    ::SetParent(m_hExeWnd,m_hWnd);
-
-	return TRUE;
 }
 // CMSVDlg 消息处理程序
 void CMSVDlg::OnClose()

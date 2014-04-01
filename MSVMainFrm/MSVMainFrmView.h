@@ -5,12 +5,15 @@
 
 #pragma once
 
-
-class CMSVMainFrmView : public CView
+#include "MSVDlg.h"
+class CMSVMainFrmView : public CFormView,CCreateProcessWnd
 {
 protected: // 仅从序列化创建
 	CMSVMainFrmView();
 	DECLARE_DYNCREATE(CMSVMainFrmView)
+
+public:
+	enum{ IDD = IDD_MSVMAINFRM_FORM };
 
 // 属性
 public:
@@ -21,9 +24,10 @@ public:
 
 // 重写
 public:
-	virtual void OnDraw(CDC* pDC);  // 重写以绘制该视图
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 支持
+	virtual void OnInitialUpdate(); // 构造后第一次调用
 
 // 实现
 public:
