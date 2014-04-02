@@ -7,7 +7,7 @@
 #include "ClassView.h"
 #include "OutputWnd.h"
 #include "ChildProcessMan.h"
-
+#include "ProcessMonitor.h"
 #ifndef use_mdi_Framewnd
 #define CMDIFrameWndEx CFrameWndEx
 #endif
@@ -27,7 +27,7 @@ public:
 
 // 操作
 public:
-	void StartWork(DWORD dwItmeData);	
+	void StartWork(DWORD dwItmeData,BOOL bAlwaysCreateProcess=FALSE);	
 
 
 
@@ -54,6 +54,7 @@ protected:  // 控件条嵌入成员
 	COutputWnd        m_wndOutput;
 	CChildAttachDialogMan	  m_ChildProcessMan;
 
+	CProcessMonitor m_ProcessMonitor;
 // 生成的消息映射函数
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
@@ -63,6 +64,7 @@ protected:
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	LRESULT onViewComplate(WPARAM wParam,LPARAM lParam);
+	LRESULT onMsgAttachWnd(WPARAM wParam,LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	BOOL CreateDockingWindows();

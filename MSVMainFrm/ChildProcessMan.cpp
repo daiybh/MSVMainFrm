@@ -4,16 +4,20 @@
 CChildAttachDialogMan::CChildAttachDialogMan(void)
 {
 	m_pParentWnd=NULL;
+	CString strExeArr[]={_T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe"),
+		_T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MgAvWriterU.exe")};
 	m_arrAttachDlgInfoData.RemoveAll();
 	{
 		//testData
-		for(int i=0;i<4;i++)
+		for(int i=0;i<2;i++)
 		{
 			AttachDlgInfoData *lpData = new AttachDlgInfoData;
-			lpData->strExePath =  _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
+			lpData->strExePath =  strExeArr[i];
 			lpData->pAttachDlg = NULL;
 			AddToArr(lpData);
 		}
+
+		
 	}
 }
 
@@ -21,12 +25,11 @@ CChildAttachDialogMan::~CChildAttachDialogMan(void)
 {
 }
 
-void CChildAttachDialogMan::StartWork( DWORD dwItmeData )
-{
-	
-	if(dwItmeData>m_arrAttachDlgInfoData.GetSize())return;
+void CChildAttachDialogMan::StartWork( DWORD dwID,BOOL bAlwaysCreateProcess/*=FALSE*/ )
+{	
+	if(dwID>m_arrAttachDlgInfoData.GetSize())return;
 	{
-		AttachDlgInfoData*pData = m_arrAttachDlgInfoData.GetAt(dwItmeData);
+		AttachDlgInfoData*pData = m_arrAttachDlgInfoData.GetAt(dwID);
 		CMSVDlg*pDlg = pData->pAttachDlg;
 		if(pDlg==NULL)
 		{
@@ -36,11 +39,13 @@ void CChildAttachDialogMan::StartWork( DWORD dwItmeData )
 			pDlg->ShowWindow(SW_HIDE);
 			pData->pAttachDlg = pDlg;
 		}
-		if(pDlg&&!pDlg->IsWindowVisible())
+		if(pDlg)
 		{
-			pDlg->SetExePath(pData->strExePath);
-			pDlg->StartWork();
-			pDlg->ShowWindow(SW_SHOW);
+			if(!pDlg->IsWindowVisible()||bAlwaysCreateProcess)
+			{				
+				pDlg->StartWork(pData->strExePath,bAlwaysCreateProcess);
+				pDlg->ShowWindow(SW_SHOW);
+			}
 		}
 	}
 }

@@ -8,7 +8,11 @@ public:
 	CCreateProcessWnd(){
 		m_bIsLoad= FALSE;
 	}
-	HWND CreateProcessEx(CString strExePath,CRect &rect)
+	typedef struct EnumFunArg{
+		HWND hWnd;
+		DWORD dwProcessId;
+	};
+	EnumFunArg CreateProcessEx(CString strExePath,CRect &rect)
 	{
 		HWND  hExeWnd = NULL;
 		STARTUPINFO sa = {0};
@@ -32,13 +36,12 @@ public:
 				CloseHandle(pi.hProcess);                                     
 			}
 		}
-		return hExeWnd;
+		EnumFunArg arg;
+		arg.dwProcessId = pi.dwProcessId;
+		arg.hWnd = hExeWnd;
+		return arg;
 	}
 
-	typedef struct EnumFunArg{
-		HWND hWnd;
-		DWORD dwProcessId;
-	};
 	static BOOL CALLBACK lpEnumFunc(HWND hwnd,LPARAM lParam)
 	{
 		EnumFunArg * pArg =reinterpret_cast<EnumFunArg*> (lParam);
@@ -59,32 +62,44 @@ public:
 		return arg.hWnd;		
 	}  
 
-	BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hParentWnd)
+	BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hParentWnd,BOOL bAlwaysCreateProcess)
 	{
-		if(m_bIsLoad)
+		if(m_bIsLoad && !bAlwaysCreateProcess)
 		{
 			ShowWindow(m_hParentWnd,SW_SHOW);
 			return TRUE;
 		}
+		m_hExeWnd =NULL;
 		CRect rect;
 		GetClientRect(hParentWnd,rect);
-		m_hExeWnd=CreateProcessEx(lpExePath,rect);
+		EnumFunArg arg=CreateProcessEx(lpExePath,rect);
 
-		if(m_hExeWnd == NULL)
+		if(arg.hWnd == NULL)
 		{
 			return FALSE;
 		}
-		CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
+		CWnd *cWnd=CWnd::FromHandle(arg.hWnd);
 		//隐藏标题栏
+
+		CString rString;
+		cWnd->GetWindowText(rString);
+		::SetWindowText(hParentWnd,rString);
 		cWnd->ModifyStyle(WS_CAPTION,0);
 		//隐藏边框
 		cWnd->ModifyStyle(WS_THICKFRAME,1);
 		//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
 		//显示对话框
-		::SetParent(m_hExeWnd,hParentWnd);
-		m_bIsLoad=TRUE;
+		::SetParent(arg.hWnd,hParentWnd);
+		
 		m_hParentWnd = hParentWnd;
-		AdjustLayout();
+		m_hExeWnd = arg.hWnd;
+		m_dwProcessId = arg.dwProcessId;
+		if(!m_bIsLoad)
+		{
+			m_bIsLoad=TRUE;
+			AdjustLayout();
+		}
+		
 		return TRUE;
 	}
 	void AdjustLayout()
@@ -104,6 +119,7 @@ public:
 		}
 	}
 	HWND    m_hExeWnd;
+	DWORD m_dwProcessId;
 	HWND	m_hParentWnd;
 	BOOL    m_bIsLoad;
 };
@@ -111,8 +127,7 @@ class CMSVDlg : public CDialog,CCreateProcessWnd
 {
 	DECLARE_DYNAMIC(CMSVDlg)
 public:
-	void SetExePath(CString strExePath);
-	BOOL StartWork();
+	BOOL StartWork(LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess=FALSE);
 protected:
 public:
 	CMSVDlg(CWnd* pParent = NULL);   // 标准构造函数

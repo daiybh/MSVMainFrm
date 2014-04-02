@@ -33,15 +33,11 @@ BEGIN_MESSAGE_MAP(CMSVDlg, CDialog)
 END_MESSAGE_MAP()
 
 
-void CMSVDlg::SetExePath(CString strExePath)
-{
-	m_strExePath = strExePath;
-}
 
-BOOL CMSVDlg::StartWork()
+BOOL CMSVDlg::StartWork( LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
-
-	return AttachExeToWnd(m_strExePath,m_hWnd);	
+	m_strExePath = lpStrExePath;
+	return AttachExeToWnd(m_strExePath,m_hWnd,bAlwaysCreateProcess);	
 }
 // CMSVDlg 消息处理程序
 void CMSVDlg::OnClose()
