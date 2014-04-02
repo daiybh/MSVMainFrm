@@ -49,7 +49,7 @@ BOOL CMSVMainFrmView::PreCreateWindow(CREATESTRUCT& cs)
 void CMSVMainFrmView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
-	ResizeParentToFit();
+	//ResizeParentToFit();//自动调整框架大小
 	CString xx = _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
 #ifdef use_mdi_Framewnd
 	AttachExeToWnd(xx,m_hWnd);
