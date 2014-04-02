@@ -4,7 +4,7 @@
 #include "FileView.h"
 #include "Resource.h"
 #include "MSVMainFrm.h"
-
+#include "ChildProcessMan.h"
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
@@ -88,6 +88,22 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 	AdjustLayout();
 }
 
+void CFileView::FillView( CChildAttachDialogMan *pAttachMan )
+{
+	m_wndFileView.DeleteAllItems();
+	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("MSV通道管理"), 0, 0);
+	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
+	HTREEITEM hSrc = m_wndFileView.InsertItem(_T("MSV采集窗口"), 0, 0, hRoot);
+
+	for (int i=0;i<pAttachMan->m_arrAttachDlgInfoData.GetSize();i++)
+	{
+		CString itemname;
+		int nCurID = pAttachMan->m_arrAttachDlgInfoData.GetAt(i)->nCurID;
+		itemname.Format(_T("%d_%d"),i,nCurID);
+		HTREEITEM hItm=m_wndFileView.InsertItem(itemname, 1, 1, hSrc);
+		m_wndFileView.SetItemData(hItm,(DWORD)i);
+	}
+}
 void CFileView::FillFileView()
 {
 	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("MSV通道管理"), 0, 0);
@@ -95,13 +111,10 @@ void CFileView::FillFileView()
 
 	HTREEITEM hSrc = m_wndFileView.InsertItem(_T("MSV采集窗口"), 0, 0, hRoot);
 
-	MSVInfoData *lpData = NULL;
+	AttachDlgInfoData *lpData = NULL;
 	HTREEITEM hItm=m_wndFileView.InsertItem(_T("MSV_3100"), 1, 1, hSrc);
-    lpData = new MSVInfoData;
+    lpData = new AttachDlgInfoData;
 
-	lpData->nCardID    = 0;
-	lpData->nCardType  = 1000;
-	lpData->nCtrlPort  = 3100;
 	lpData->strExePath = //_T("F:\\WORK\\MSV\\MSV\\V5.4(Pro2.2)\\Middle\\binU\\MSVMainAppU.exe");
 	lpData->strExePath =  _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
 	m_wndFileView.SetItemData(hItm,(DWORD)lpData);
@@ -114,10 +127,8 @@ void CFileView::FillFileView()
 
 	hItm=m_wndFileView.InsertItem(_T("Client_3100"), 2, 2, hInc);
 
-	lpData = new MSVInfoData;
-	lpData->nCardID    = 0;
-	lpData->nCardType  = 1000;
-	lpData->nCtrlPort  = 3100;
+	lpData = new AttachDlgInfoData;
+
 	lpData->strExePath = //_T("F:\\WORK\\MSV\\MSV\\V5.4(Pro2.2)\\Middle\\binU\\MSVMainAppU.exe");
 	lpData->strExePath =  _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MgAvWriterU.exe");
 	m_wndFileView.SetItemData(hItm,(DWORD)lpData);
@@ -270,6 +281,8 @@ void CFileView::OnChangeVisualStyle()
 
 	m_wndFileView.SetImageList(&m_FileViewImages, TVSIL_NORMAL);
 }
+
+
 // 
 // 
 // BOOL CFileView::CanBeClosed() const

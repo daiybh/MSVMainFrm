@@ -12,7 +12,7 @@ class CFileViewToolBar : public CMFCToolBar
 
 	virtual BOOL AllowShowOnList() const { return FALSE; }
 };
-
+class CChildAttachDialogMan;
 class CFileView : public CDockablePane
 {
 // ππ‘Ï
@@ -21,7 +21,7 @@ public:
 
 	void AdjustLayout();
 	void OnChangeVisualStyle();
-
+	void FillView(CChildAttachDialogMan *pAttachMan);
 //  Ù–‘
 protected:
 

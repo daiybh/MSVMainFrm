@@ -1,5 +1,18 @@
 #pragma once
 class CMSVDlg;
+
+typedef struct tag_AttachDlgInfo{
+	int		nCurID;
+	int     nProcessID;
+	CString strExePath;
+	CMSVDlg	*pAttachDlg;
+	tag_AttachDlgInfo(){
+		pAttachDlg =NULL;
+		nProcessID = 0;
+		nCurID=0;
+	}
+}AttachDlgInfoData;
+
 class CChildAttachDialogMan
 {
 public:
@@ -8,8 +21,12 @@ public:
 	void StartWork(DWORD dwItmeData);
 	void setParentWnd(CWnd *pWnd){m_pParentWnd = pWnd;};
 private:
-	void CreateChildDlg(int nChanCount);
+	void CreateChildDlg();
 private:
 	CWnd *m_pParentWnd;
-	CMSVDlg *m_lpAttachDlg[8];
+	//CArray<CMSVDlg*,CMSVDlg*> m_arrAttachDlg;
+public:
+	void AddToArr(AttachDlgInfoData*pData);
+	CArray<AttachDlgInfoData*,AttachDlgInfoData*> m_arrAttachDlgInfoData;
+	//CMSVDlg *m_lpAttachDlg[8];
 };

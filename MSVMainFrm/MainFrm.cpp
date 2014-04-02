@@ -12,15 +12,20 @@
 #endif
 
 // CMainFrame
-
+#ifdef use_mdi_Framewnd
 IMPLEMENT_DYNAMIC(CMainFrame, CMDIFrameWndEx)
+#else
+IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
+#define CMDIFrameWndEx CFrameWndEx
+#endif
 
 const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
-
+#define ID_MSG_VIEW_COMPLATE WM_USER+101
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_WM_CREATE()
+	ON_MESSAGE(ID_MSG_VIEW_COMPLATE,&CMainFrame::onViewComplate)
 	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
@@ -126,10 +131,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 
-
+#ifdef use_mdi_Framewnd
 	// 启用增强的窗口管理对话框
 	EnableWindowsDialog(ID_WINDOW_MANAGER, IDS_WINDOWS_MANAGER, TRUE);
-
+#endif
 	// 启用工具栏和停靠窗口菜单替换
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
 
@@ -174,6 +179,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
+#ifndef use_mdi_Framewnd
+	CFrameWndEx::EnableLoadDockState(FALSE) ;
+#endif
+
+	CWnd *pWnd = this->GetActiveView();
+	if(pWnd)AfxMessageBox(_T("pwdn"));
 	return 0;
 }
 
@@ -183,6 +194,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 		return FALSE;
 	// TODO: 在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
+	cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
+	cs.lpszClass = AfxRegisterWndClass(0);
 
 	return TRUE;
 }
@@ -257,7 +270,9 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 void CMainFrame::OnWindowManager()
 {
+#ifdef use_mdi_Framewnd
 	ShowWindowsDialog();
+#endif
 }
 
 void CMainFrame::OnViewCustomize()
@@ -361,6 +376,9 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 		return FALSE;
 	}
 
+	CWinApp* pApp = AfxGetApp();
+	if (pApp->m_pMainWnd == NULL)
+		pApp->m_pMainWnd = this;
 
 	// 为所有用户工具栏启用自定义按钮
 	BOOL bNameValid;
@@ -382,21 +400,20 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 void CMainFrame::StartWork(DWORD dwItmeData)
 {
-	theApp.OnOpen();
-	//theApp.OnNew();
-/*
-	
-	CDocument *pNewDoc = new CMSVMainFrmDoc();
-
-	POSITION tplPos = AfxGetApp()->GetFirstDocTemplatePosition();
-	CDocTemplate *pDocTpl = AfxGetApp()->GetNextDocTemplate(tplPos);
-	CChildFrame *pNewChWnd = (CChildFrame*)(pDocTpl->CreateNewFrame(pNewDoc,NULL));
-	pNewChWnd->SetTitle(_T("windows title"));
-	pNewChWnd->ShowWindow(SW_SHOWNORMAL);
-	pNewChWnd->SetFocus();
-	/**/
-	return;
+#ifdef use_mdi_Framewnd	
+	theApp.OnNew();
+#else
 	CWnd *pWnd = this->GetActiveView();
 	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
 	m_ChildProcessMan.StartWork(dwItmeData);
+#endif
+}
+
+LRESULT CMainFrame::onViewComplate( WPARAM wParam,LPARAM lParam )
+{
+	CWnd *pWnd = this->GetActiveView();
+	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
+	
+	m_wndFileView.FillView(&m_ChildProcessMan);
+	return 1;
 }

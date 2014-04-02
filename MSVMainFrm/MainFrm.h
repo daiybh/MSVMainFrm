@@ -7,9 +7,18 @@
 #include "ClassView.h"
 #include "OutputWnd.h"
 #include "ChildProcessMan.h"
+
+#ifndef use_mdi_Framewnd
+#define CMDIFrameWndEx CFrameWndEx
+#endif
+
 class CMainFrame : public CMDIFrameWndEx
 {
+#ifdef use_mdi_Framewnd
 	DECLARE_DYNAMIC(CMainFrame)
+#else
+	DECLARE_DYNCREATE(CMainFrame)
+#endif
 public:
 	CMainFrame();
 
@@ -53,6 +62,7 @@ protected:
 	afx_msg LRESULT OnToolbarCreateNew(WPARAM wp, LPARAM lp);
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
+	LRESULT onViewComplate(WPARAM wParam,LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
 	BOOL CreateDockingWindows();

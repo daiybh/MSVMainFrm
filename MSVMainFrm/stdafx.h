@@ -42,44 +42,10 @@
 #define  EN_TRANSFER   0x02
 #define  EN_UPDATEINFO 0x04
 
-typedef struct tag_MSVInfo{
-	int     nCardID;
-	int     nCtrlPort;
-	int     nCardType;
-	CString strExePath;
-}MSVInfoData;
-
-typedef struct tag_MSVMaterialInfo{
-    int     nCureState;
-	DWORD   dwTaskId;
-	CTime   timeCreateTime;
-	DWORD   dwTotalFrame;
-	DWORD   dwChunkCount;
-	int     nRowCtrlList;    
-	TCHAR   szIdxPath[MAX_PATH];
-	TCHAR   szTaskName[MAX_PATH];
-	TCHAR   szIDXSelfPath[MAX_PATH]; //°ëÂ·¾¶
-	BYTE    *lpDataInfo[4];
-	tag_MSVMaterialInfo()
-	{
-		nCureState  = EN_CAPFINISH;
-        dwTaskId     = 0;
-		dwTotalFrame = 0;
-        dwChunkCount  = 0;
-        nRowCtrlList  = -1;
-		szIdxPath[0]  = _T('\0');
-        szTaskName[0] = _T('\0');
-        szIDXSelfPath[0] =_T('\0');
-		
-		for (int n=0;n<4;n++)
-		{
-			lpDataInfo[n] = NULL;
-		}
-	}
-}STMSVMaterialInfo,*LPMSVMaterialInfo;
 
 #define MSVINFO_DBCLICK  WM_USER+100
 
+//#define use_mdi_Framewnd
 #ifdef _UNICODE
 #if defined _M_IX86
 #pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")

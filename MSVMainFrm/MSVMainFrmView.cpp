@@ -51,7 +51,11 @@ void CMSVMainFrmView::OnInitialUpdate()
 	CFormView::OnInitialUpdate();
 	ResizeParentToFit();
 	CString xx = _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
+#ifdef use_mdi_Framewnd
 	AttachExeToWnd(xx,m_hWnd);
+#endif
+	AfxGetMainWnd()->SendMessage(WM_USER+101,0,0);
+
 }
 
 void CMSVMainFrmView::OnRButtonUp(UINT nFlags, CPoint point)

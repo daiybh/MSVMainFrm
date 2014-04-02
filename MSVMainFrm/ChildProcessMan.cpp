@@ -4,9 +4,16 @@
 CChildAttachDialogMan::CChildAttachDialogMan(void)
 {
 	m_pParentWnd=NULL;
-	for (int n=0;n<8;n++)
+	m_arrAttachDlgInfoData.RemoveAll();
 	{
-		m_lpAttachDlg[n] = NULL;
+		//testData
+		for(int i=0;i<4;i++)
+		{
+			AttachDlgInfoData *lpData = new AttachDlgInfoData;
+			lpData->strExePath =  _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
+			lpData->pAttachDlg = NULL;
+			AddToArr(lpData);
+		}
 	}
 }
 
@@ -16,42 +23,47 @@ CChildAttachDialogMan::~CChildAttachDialogMan(void)
 
 void CChildAttachDialogMan::StartWork( DWORD dwItmeData )
 {
-	if(dwItmeData<1)return;
-	MSVInfoData *lpMSVInfo =NULL;
-	if(dwItmeData >0)
+	
+	if(dwItmeData>m_arrAttachDlgInfoData.GetSize())return;
 	{
-		lpMSVInfo = (MSVInfoData*)dwItmeData;
-	}
-	int n=0;
-	if(m_lpAttachDlg[0]==NULL)
-		CreateChildDlg(4);
-	for (;n<4;n++)
-	{
-		if(!m_lpAttachDlg[n]->IsWindowVisible())
+		AttachDlgInfoData*pData = m_arrAttachDlgInfoData.GetAt(dwItmeData);
+		CMSVDlg*pDlg = pData->pAttachDlg;
+		if(pDlg==NULL)
 		{
-			m_lpAttachDlg[n]->SetExePath(lpMSVInfo->strExePath);
-			m_lpAttachDlg[n]->StartWork();
-			m_lpAttachDlg[n]->ShowWindow(SW_SHOW);
-			break;
+			pDlg = new CMSVDlg();
+			pDlg ->Create(IDD_MSVDLG,m_pParentWnd);
+			::SetParent(pDlg->m_hWnd,m_pParentWnd->m_hWnd);
+			pDlg->ShowWindow(SW_HIDE);
+			pData->pAttachDlg = pDlg;
+		}
+		if(pDlg&&!pDlg->IsWindowVisible())
+		{
+			pDlg->SetExePath(pData->strExePath);
+			pDlg->StartWork();
+			pDlg->ShowWindow(SW_SHOW);
 		}
 	}
 }
 
-void CChildAttachDialogMan::CreateChildDlg( int nChanCount )
+void CChildAttachDialogMan::CreateChildDlg()
 {
 	if(m_pParentWnd==NULL)return;
-	for (int n=0;n<nChanCount;n++)
+	for (int n=0;n<m_arrAttachDlgInfoData.GetSize();n++)
 	{
-		if(m_lpAttachDlg[n] == NULL)
+		AttachDlgInfoData * pData = m_arrAttachDlgInfoData.GetAt(n);
+		if(pData&&pData->pAttachDlg==NULL)		
 		{
-			m_lpAttachDlg[n] = new CMSVDlg();
-
-			//	pDlg->Create(IDD_MSVDLG,);
-			m_lpAttachDlg[n] ->Create(IDD_MSVDLG,m_pParentWnd);
-
-			::SetParent(m_lpAttachDlg[n]->m_hWnd,m_pParentWnd->m_hWnd);
-			m_lpAttachDlg[n]->ShowWindow(SW_HIDE);
+			CMSVDlg*pDlg = new CMSVDlg();
+			pDlg ->Create(IDD_MSVDLG,m_pParentWnd);
+			::SetParent(pDlg->m_hWnd,m_pParentWnd->m_hWnd);
+			pDlg->ShowWindow(SW_HIDE);
+			pData->pAttachDlg = pDlg;
 		}
 	}
-	//AdjustLayout(nChanCount);
+}
+
+void CChildAttachDialogMan::AddToArr( AttachDlgInfoData*pData )
+{
+	pData->nCurID = m_arrAttachDlgInfoData.GetSize();
+	m_arrAttachDlgInfoData.Add(pData);
 }

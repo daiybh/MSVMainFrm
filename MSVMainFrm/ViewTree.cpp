@@ -21,6 +21,7 @@ CViewTree::~CViewTree()
 
 BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
 	ON_NOTIFY_REFLECT(NM_CLICK, &CViewTree::OnNMClick)
+	ON_NOTIFY_REFLECT(NM_DBLCLK, &CViewTree::OnNMDblclk)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -60,13 +61,22 @@ void CViewTree::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 			hSelect = GetRootItem();
 		}
 	}
-
 	if( NULL != hSelect )
 	{
-		//CString str = pTreeCtrl->GetItemText(hSelect);
-	    DWORD dwData = pTreeCtrl->GetItemData(hSelect);
-        
-		((CMainFrame*)AfxGetMainWnd())->StartWork(dwData);
+		HTREEITEM hChildItem = GetChildItem(hSelect);
+		if(hChildItem==NULL)
+		{
+			//CString str = pTreeCtrl->GetItemText(hSelect);
+
+			DWORD dwData = pTreeCtrl->GetItemData(hSelect);        
+			((CMainFrame*)AfxGetMainWnd())->StartWork(dwData);
+		}
 	}
+	*pResult = 0;
+}
+
+void CViewTree::OnNMDblclk(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
 	*pResult = 0;
 }
