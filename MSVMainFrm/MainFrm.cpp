@@ -182,9 +182,6 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 #ifndef use_mdi_Framewnd
 	CFrameWndEx::EnableLoadDockState(FALSE) ;
 #endif
-
-	CWnd *pWnd = this->GetActiveView();
-	if(pWnd)AfxMessageBox(_T("pwdn"));
 	return 0;
 }
 
