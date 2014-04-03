@@ -125,7 +125,7 @@ BOOL CMSVMainFrmApp::InitInstance()
 	//	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 	if (!ProcessShellCommand(cmdInfo))
 		return FALSE;
-	m_pMainWnd->ShowWindow(SW_SHOW);
+	m_pMainWnd->ShowWindow(SW_SHOWMAXIMIZED);
 	m_pMainWnd->UpdateWindow();
 
 	// 主窗口已初始化，因此显示它并对其进行更新
