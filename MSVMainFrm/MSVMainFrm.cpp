@@ -106,11 +106,7 @@ BOOL CMSVMainFrmApp::InitInstance()
 #endif
 	if (!pDocTemplate)
 		return FALSE;
-
 	AddDocTemplate(pDocTemplate);
-
-
-
 	// 创建主 MDI 框架窗口
 #ifdef use_mdi_Framewnd
 	CMainFrame* pMainFrame = new CMainFrame;
@@ -121,8 +117,6 @@ BOOL CMSVMainFrmApp::InitInstance()
 		return FALSE;
 	}
 	m_pMainWnd = pMainFrame;
-
-
 #endif
 	// 分析标准外壳命令、DDE、打开文件操作的命令行
 	CCommandLineInfo cmdInfo;
