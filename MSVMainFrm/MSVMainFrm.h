@@ -18,13 +18,11 @@ class CMSVMainFrmApp : public CWinAppEx
 {
 public:
 	CMSVMainFrmApp();
-#ifndef use_mdi_Framewnd
 protected:
 	CMultiDocTemplate* m_pDocTemplate;
 	afx_msg void OnFileNewFrame();
 	afx_msg void OnFileNew();
 
-#endif
 
 // ÖØÐ´
 public:

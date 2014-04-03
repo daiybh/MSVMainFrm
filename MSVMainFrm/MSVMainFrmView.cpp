@@ -49,13 +49,10 @@ BOOL CMSVMainFrmView::PreCreateWindow(CREATESTRUCT& cs)
 void CMSVMainFrmView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
-	//ResizeParentToFit();//自动调整框架大小
-	CString xx = _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
 #ifdef use_mdi_Framewnd
-	AttachExeToWnd(xx,m_hWnd);
-#endif
+	ResizeParentToFit();//自动调整框架大小
+#endif	
 	AfxGetMainWnd()->SendMessage(WM_USER+101,0,0);
-
 }
 
 void CMSVMainFrmView::OnRButtonUp(UINT nFlags, CPoint point)

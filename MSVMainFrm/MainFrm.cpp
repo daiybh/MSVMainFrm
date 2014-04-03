@@ -181,9 +181,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
-#ifndef use_mdi_Framewnd
-	CFrameWndEx::EnableLoadDockState(FALSE) ;
-#endif
+	CMDIFrameWndEx::EnableLoadDockState(TRUE) ;
 	return 0;
 }
 
@@ -399,13 +397,9 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 void CMainFrame::StartWork( DWORD dwItmeData,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
-#ifdef use_mdi_Framewnd	
-	theApp.OnNew();
-#else
 	CWnd *pWnd = this->GetActiveView();
 	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
 	m_ChildProcessMan.StartWork(dwItmeData,bAlwaysCreateProcess);
-#endif
 }
 
 LRESULT CMainFrame::onViewComplate( WPARAM wParam,LPARAM lParam )

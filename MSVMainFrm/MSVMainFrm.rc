@@ -473,6 +473,8 @@ END
 
 STRINGTABLE 
 BEGIN
+	ID_FILE_NEW_FRAME		"创建新框架\n新建框架"
+	IDS_CLOSE				"关闭"
     ID_FILE_NEW             "创建新文档\n新建"
     ID_FILE_OPEN            "打开现有文档\n打开"
     ID_FILE_CLOSE           "关闭活动文档\n关闭"
