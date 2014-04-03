@@ -52,7 +52,6 @@ void CMSVMainFrmView::OnInitialUpdate()
 #ifdef use_mdi_Framewnd
 	ResizeParentToFit();//自动调整框架大小
 #endif	
-	AfxGetMainWnd()->SendMessage(WM_USER+101,0,0);
 }
 
 void CMSVMainFrmView::OnRButtonUp(UINT nFlags, CPoint point)
@@ -89,3 +88,16 @@ CMSVMainFrmDoc* CMSVMainFrmView::GetDocument() const // 非调试版本是内联的
 
 
 // CMSVMainFrmView 消息处理程序
+
+void CMSVMainFrmView::OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+
+	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
+	if(bActivate)
+	{
+
+		AfxGetMainWnd()->SendMessage(WM_USER+101,0,0);
+
+	}
+}
