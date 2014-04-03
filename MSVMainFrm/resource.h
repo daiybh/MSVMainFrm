@@ -3,8 +3,8 @@
 // Used by MSVMainFrm.rc
 //
 #define IDD_ABOUTBOX                    100
-#define IDD_MSVMAINFRM_FORM			101
 #define IDP_OLE_INIT_FAILED             100
+#define IDD_MSVMAINFRM_FORM             101
 #define IDR_POPUP_EDIT                  119
 #define ID_STATUSBAR_PANE1              120
 #define ID_STATUSBAR_PANE2              121
@@ -34,18 +34,18 @@
 #define ID_SORTING_SORTALPHABETIC       146
 #define ID_SORTING_SORTBYTYPE           147
 #define ID_SORTING_SORTBYACCESS         148
-#define ID_VIEW_OUTPUTWND			149
+#define ID_VIEW_OUTPUTWND               149
 #define IDS_MSV_SDI                     155
 #define IDS_MSV_IP                      156
-#define IDS_FILE_VIEW				158
-#define IDS_CLASS_VIEW				159
-#define IDS_OUTPUT_WND				157
+#define IDS_OUTPUT_WND                  157
+#define IDS_FILE_VIEW                   158
+#define IDS_CLASS_VIEW                  159
 #define IDI_FILE_VIEW                   161
 #define IDI_FILE_VIEW_HC                162
 #define IDI_CLASS_VIEW                  163
 #define IDI_CLASS_VIEW_HC               164
-#define IDI_OUTPUT_WND				165
-#define IDI_OUTPUT_WND_HC			166
+#define IDI_OUTPUT_WND                  165
+#define IDI_OUTPUT_WND_HC               166
 #define IDR_EXPLORER                    169
 #define IDB_EXPLORER_24                 170
 #define IDR_SORT                        171
@@ -59,7 +59,7 @@
 #define IDR_MENU_IMAGES                 179
 #define IDB_MENU_IMAGES_24              180
 #define ID_TOOLS_MACRO                  181
-#define IDR_OUTPUT_POPUP			182
+#define IDR_OUTPUT_POPUP                182
 #define IDS_CLOSE                       195
 #define IDR_THEME_MENU                  200
 #define ID_SET_STYLE                    201
@@ -72,15 +72,16 @@
 #define ID_VIEW_APPLOOK_OFF_2007_BLACK  216
 #define ID_VIEW_APPLOOK_OFF_2007_SILVER 217
 #define ID_VIEW_APPLOOK_OFF_2007_AQUA   218
-#define IDS_BUILD_TAB				300
-#define IDS_DEBUG_TAB				301
-#define IDS_FIND_TAB				302
+#define IDS_BUILD_TAB                   300
+#define IDS_DEBUG_TAB                   301
+#define IDS_FIND_TAB                    302
 #define IDS_EXPLORER                    305
 #define IDS_EDIT_MENU                   306
 #define IDD_MSVDLG                      310
 #define IDD_DIALOG_DATAINFO             311
 #define IDC_TREE1                       1000
 #define IDC_TREE_DATAINFO               1000
+#define IDC_STATIC_MASK                 1002
 #define ID_Menu                         32771
 #define ID_32772                        32772
 
@@ -90,7 +91,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        312
 #define _APS_NEXT_COMMAND_VALUE         32773
-#define _APS_NEXT_CONTROL_VALUE         1001
+#define _APS_NEXT_CONTROL_VALUE         1003
 #define _APS_NEXT_SYMED_VALUE           311
 #endif
 #endif

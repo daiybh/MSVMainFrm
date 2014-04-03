@@ -359,7 +359,7 @@ BEGIN
     DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
 END
 
-IDD_MSVDLG DIALOGEX 0, 0, 255, 180
+IDD_MSVDLG DIALOGEX 0, 0, 251, 176
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_CLIPCHILDREN | WS_CAPTION | WS_SYSMENU
 FONT 9, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
@@ -427,6 +427,12 @@ BEGIN
         BOTTOMMARGIN, 55
     END
 
+    IDD_MSVDLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 248
+        BOTTOMMARGIN, 174
+    END
+
     IDD_MSVMAINFRM_FORM, DIALOG
     BEGIN
         LEFTMARGIN, 7
@@ -473,13 +479,17 @@ END
 
 STRINGTABLE 
 BEGIN
-	ID_FILE_NEW_FRAME		"创建新框架\n新建框架"
-	IDS_CLOSE				"关闭"
     ID_FILE_NEW             "创建新文档\n新建"
     ID_FILE_OPEN            "打开现有文档\n打开"
     ID_FILE_CLOSE           "关闭活动文档\n关闭"
     ID_FILE_SAVE            "保存活动文档\n保存"
     ID_FILE_SAVE_AS         "用新名称保存活动文档\n另存为"
+    ID_FILE_NEW_FRAME       "创建新框架\n新建框架"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_CLOSE               "关闭"
 END
 
 STRINGTABLE 

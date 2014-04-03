@@ -17,10 +17,12 @@ public:
 		HWND  hExeWnd = NULL;
 		STARTUPINFO sa = {0};
 		sa.cb = sizeof(STARTUPINFO);
+		/*
 		sa.dwX= rect.left;
 		sa.dwY= rect.top;
 		sa.dwXSize=rect.Width();
 		sa.dwYSize=rect.Height();
+		/**/
 		sa.wShowWindow=SW_HIDE;
 		sa.dwFlags=STARTF_USEPOSITION | STARTF_USESIZE;            //設置了窗口坐标位置，窗口大小标志位有效，但是进程
 
@@ -61,8 +63,11 @@ public:
 		EnumWindows(&CCreateProcessWnd::lpEnumFunc,reinterpret_cast<LPARAM>(&arg));
 		return arg.hWnd;		
 	}  
-
 	BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hParentWnd,BOOL bAlwaysCreateProcess)
+	{
+	return 	AttachExeToWnd(lpExePath,hParentWnd,NULL,bAlwaysCreateProcess);
+	}
+	BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hParentWnd,HWND hDlgWnd,BOOL bAlwaysCreateProcess)
 	{
 		if(m_bIsLoad && !bAlwaysCreateProcess)
 		{
@@ -83,7 +88,9 @@ public:
 
 		CString rString;
 		cWnd->GetWindowText(rString);
-		::SetWindowText(hParentWnd,rString);
+
+		::SetWindowText(hParentWnd,_T(""));
+		::SetWindowText((hDlgWnd==NULL)?hParentWnd:hDlgWnd,rString);
 		cWnd->ModifyStyle(WS_CAPTION,0);
 		//隐藏边框
 		cWnd->ModifyStyle(WS_THICKFRAME,1);
@@ -97,17 +104,22 @@ public:
 		if(!m_bIsLoad)
 		{
 			m_bIsLoad=TRUE;
-			AdjustLayout();
+			AdjustLayout(hParentWnd,hDlgWnd);
 		}
 		
 		return TRUE;
 	}
 	void AdjustLayout()
 	{
+		AdjustLayout(m_hParentWnd,NULL);
+	}
+	void AdjustLayout(HWND hParentWnd,HWND hDlgWnd)
+	{
 		if(!m_bIsLoad)
 			return;
 		CRect rect;
-		GetClientRect(m_hParentWnd,rect);
+		GetClientRect(hDlgWnd?hDlgWnd:hParentWnd,rect);
+
 		CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
 		CRect m_exeRect;
 		cWnd->GetClientRect(m_exeRect);
@@ -115,7 +127,10 @@ public:
 			cWnd->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), 0);
 		else
 		{
-			SetWindowPos(m_hParentWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+1, m_exeRect.Height()+10, 0);
+			SetWindowPos(hParentWnd,NULL, m_exeRect.left+5, m_exeRect.top+5, m_exeRect.Width()+1-5, m_exeRect.Height()+10-5, 0);
+		}
+		if(hDlgWnd&& hDlgWnd!=hParentWnd){
+			SetWindowPos(hDlgWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+1, m_exeRect.Height()+10, 0);
 		}
 	}
 	HWND    m_hExeWnd;

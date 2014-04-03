@@ -14,6 +14,12 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 			AttachDlgInfoData *lpData = new AttachDlgInfoData;
 			lpData->strExePath =  strExeArr[i];
 			lpData->pAttachDlg = NULL;
+
+			CMSVDlg*pDlg = new CMSVDlg();
+			//CWnd*pPp = (pParentWnd==NULL)?m_pParentWnd:pParentWnd;
+			pDlg ->Create(IDD_MSVDLG);
+			lpData->pAttachDlg = pDlg;
+
 			AddToArr(lpData);
 		}
 
@@ -42,6 +48,10 @@ void CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,BOOL bAlwaysCr
 		}
 		if(pDlg)
 		{
+
+			CWnd*pPp = (pParentWnd==NULL)?m_pParentWnd:pParentWnd;
+			::SetParent(pDlg->m_hWnd,pPp->m_hWnd);		
+
 			if(!pDlg->IsWindowVisible()||bAlwaysCreateProcess)
 			{				
 				pDlg->StartWork(pData->strExePath,bAlwaysCreateProcess);
