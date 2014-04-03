@@ -18,7 +18,7 @@ class CChildAttachDialogMan
 public:
 	~CChildAttachDialogMan(void);
 	CChildAttachDialogMan(void);
-	void StartWork(DWORD dwID,BOOL bAlwaysCreateProcess=FALSE);
+	void StartWork(DWORD dwID,CWnd*pParentWnd,BOOL bAlwaysCreateProcess=FALSE);
 	void setParentWnd(CWnd *pWnd){m_pParentWnd = pWnd;};
 private:
 	void CreateChildDlg();

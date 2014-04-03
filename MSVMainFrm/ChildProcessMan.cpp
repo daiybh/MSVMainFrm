@@ -25,7 +25,7 @@ CChildAttachDialogMan::~CChildAttachDialogMan(void)
 {
 }
 
-void CChildAttachDialogMan::StartWork( DWORD dwID,BOOL bAlwaysCreateProcess/*=FALSE*/ )
+void CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {	
 	if(dwID>m_arrAttachDlgInfoData.GetSize())return;
 	{
@@ -34,8 +34,9 @@ void CChildAttachDialogMan::StartWork( DWORD dwID,BOOL bAlwaysCreateProcess/*=FA
 		if(pDlg==NULL)
 		{
 			pDlg = new CMSVDlg();
-			pDlg ->Create(IDD_MSVDLG,m_pParentWnd);
-			::SetParent(pDlg->m_hWnd,m_pParentWnd->m_hWnd);
+			CWnd*pPp = (pParentWnd==NULL)?m_pParentWnd:pParentWnd;
+			pDlg ->Create(IDD_MSVDLG,pPp);
+			::SetParent(pDlg->m_hWnd,pPp->m_hWnd);
 			pDlg->ShowWindow(SW_HIDE);
 			pData->pAttachDlg = pDlg;
 		}
