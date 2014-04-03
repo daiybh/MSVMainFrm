@@ -22,11 +22,11 @@ IMPLEMENT_DYNCREATE(CMainFrame, CFrameWndEx)
 const int  iMaxUserToolbars = 10;
 const UINT uiFirstUserToolBarId = AFX_IDW_CONTROLBAR_FIRST + 40;
 const UINT uiLastUserToolBarId = uiFirstUserToolBarId + iMaxUserToolbars - 1;
-#define ID_MSG_VIEW_COMPLATE WM_USER+101
+#define ID_MSG_VIEW_COMPLETE WM_USER+101
 #define ID_MSG_ATTACH_WND	 WM_USER+102
 BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_WM_CREATE()
-	ON_MESSAGE(ID_MSG_VIEW_COMPLATE,&CMainFrame::onViewComplate)
+	ON_MESSAGE(ID_MSG_VIEW_COMPLETE,&CMainFrame::onViewComplete)
 	ON_MESSAGE(ID_MSG_ATTACH_WND,&CMainFrame::onMsgAttachWnd)
 	ON_COMMAND(ID_WINDOW_MANAGER, &CMainFrame::OnWindowManager)
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
@@ -395,18 +395,30 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	return TRUE;
 }
 
+CWnd *_getActiveView(CMainFrame*pThis)
+{
+
+	CFrameWnd *pFrameWnd=pThis;
+	CView *pView =NULL;
+#ifdef use_mdi_Framewnd
+	//mdi 此时的active frame 还是 自己，so activeview 为null
+	CMDIChildWnd *pChild = (CMDIChildWnd*)pThis->GetActiveFrame();
+	pView=pChild->GetActiveView();
+	pFrameWnd = pThis->GetActiveFrame();
+#endif
+	CWnd *pWnd = pFrameWnd->GetActiveView();
+	return (pWnd==NULL)?pFrameWnd:pWnd;
+}
 void CMainFrame::StartWork( DWORD dwItmeData,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
-	CWnd *pWnd = this->GetActiveView();
-	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
-	m_ChildProcessMan.StartWork(dwItmeData,bAlwaysCreateProcess);
+	m_ChildProcessMan.StartWork(dwItmeData,_getActiveView(this),bAlwaysCreateProcess);
 }
-
-LRESULT CMainFrame::onViewComplate( WPARAM wParam,LPARAM lParam )
+LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 {
-	CWnd *pWnd = this->GetActiveView();
-	m_ChildProcessMan.setParentWnd((pWnd==NULL)?this:pWnd);
-	
+	static BOOL g_bHadComplete=FALSE;
+	if(g_bHadComplete)return 1;
+	g_bHadComplete=TRUE;
+	m_ChildProcessMan.setParentWnd(_getActiveView(this));	
 	m_wndFileView.FillView(&m_ChildProcessMan);
 	m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);
 

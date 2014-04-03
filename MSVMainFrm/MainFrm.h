@@ -63,7 +63,7 @@ protected:
 	afx_msg LRESULT OnToolbarCreateNew(WPARAM wp, LPARAM lp);
 	afx_msg void OnApplicationLook(UINT id);
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
-	LRESULT onViewComplate(WPARAM wParam,LPARAM lParam);
+	LRESULT onViewComplete(WPARAM wParam,LPARAM lParam);
 	LRESULT onMsgAttachWnd(WPARAM wParam,LPARAM lParam);
 	DECLARE_MESSAGE_MAP()
 
