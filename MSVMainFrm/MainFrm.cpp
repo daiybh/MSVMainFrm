@@ -415,6 +415,10 @@ CWnd *_getActiveView(CMainFrame*pThis)
 }
 void CMainFrame::StartWork( DWORD dwItmeData,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
+
+	CString strLog;
+	strLog.Format(_T("StartWork id=%d"),dwItmeData);
+	m_wndOutput.AddBuildinfo(strLog);
 	m_ChildProcessMan.StartWork(dwItmeData,_getActiveView(this),bAlwaysCreateProcess);
 }
 LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
@@ -442,6 +446,7 @@ void CMainFrame::OnButtonStop()
 	// TODO: 在此添加命令处理程序代码
 	m_ProcessMonitor.PauseMonitor();
 	bPause=TRUE;
+	m_wndOutput.AddBuildinfo(_T("暂停监控"));
 }
 void CMainFrame::OnUpdateButtonStop(CCmdUI *pCmdUI)
 {
@@ -454,6 +459,7 @@ void CMainFrame::OnButtonMonitor()
 	// TODO: 在此添加命令处理程序代码
 	m_ProcessMonitor.ResumeMonitor();
 	bPause=FALSE;
+	m_wndOutput.AddBuildinfo(_T("恢复监控"));
 }
 
 void CMainFrame::OnUpdateButtonMonitor(CCmdUI *pCmdUI)
