@@ -6,6 +6,7 @@
 #pragma comment(lib,"Psapi.Lib")
 CProcessMonitor::CProcessMonitor(void)
 {
+	m_bPauseMonitor=FALSE;
 }
 
 CProcessMonitor::~CProcessMonitor(void)
@@ -16,7 +17,7 @@ void CProcessMonitor::StartWork(HWND hMsgWnd,const CArray<AttachDlgInfoData*,Att
 	m_pArrAttachData = pArr;
 	m_hMsgWnd = hMsgWnd;
 	m_hMonitorThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)_MonitorThread_CB, this,NULL,0);	
-
+	m_bPauseMonitor=FALSE;
 }
 void CProcessMonitor::_MonitorThread_CB( LPVOID para )
 {
@@ -106,5 +107,20 @@ void CProcessMonitor::_MonitorThread()
 		}
 		nPocessNum = m_pArrAttachData->GetSize();
 	}
+}
+
+void CProcessMonitor::PauseMonitor()
+{
+	if(!m_bPauseMonitor)
+		SuspendThread(m_hMonitorThread);
+	m_bPauseMonitor=true;
+}
+
+void CProcessMonitor::ResumeMonitor()
+{
+	if(m_bPauseMonitor)
+		ResumeThread(m_hMonitorThread);
+
+	m_bPauseMonitor=FALSE;
 }
 

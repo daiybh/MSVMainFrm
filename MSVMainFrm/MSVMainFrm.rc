@@ -121,15 +121,10 @@ END
 
 IDR_MAINFRAME_256 TOOLBAR  16, 16
 BEGIN
-    BUTTON      ID_FILE_NEW
-    BUTTON      ID_FILE_OPEN
-    BUTTON      ID_FILE_SAVE
+    BUTTON      ID_BUTTON_MONITOR
+    BUTTON      ID_BUTTON_STOP
     SEPARATOR
-    BUTTON      ID_EDIT_CUT
-    BUTTON      ID_EDIT_COPY
-    BUTTON      ID_EDIT_PASTE
-    SEPARATOR
-    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_APP_EXIT
     BUTTON      ID_APP_ABOUT
 END
 
@@ -208,23 +203,10 @@ IDR_MSVMainFrmTYPE MENU
 BEGIN
     POPUP "文件(&F)"
     BEGIN
-        MENUITEM "新建(&N)\tCtrl+N",              ID_FILE_NEW
-        MENUITEM "打开(&O)...\tCtrl+O",           ID_FILE_OPEN
-        MENUITEM "关闭(&C)",                      ID_FILE_CLOSE
-        MENUITEM "保存(&S)\tCtrl+S",              ID_FILE_SAVE
-        MENUITEM "另存为(&A)...",                  ID_FILE_SAVE_AS
-        MENUITEM SEPARATOR
-        MENUITEM "最近的文件",                       ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM "暂停监控",                        ID_BUTTON_STOP
+        MENUITEM "恢复监控",                        ID_BUTTON_MONITOR
         MENUITEM SEPARATOR
         MENUITEM "退出(&X)",                      ID_APP_EXIT
-    END
-    POPUP "编辑(&E)"
-    BEGIN
-        MENUITEM "撤消(&U)\tCtrl+Z",              ID_EDIT_UNDO
-        MENUITEM SEPARATOR
-        MENUITEM "剪切(&T)\tCtrl+X",              ID_EDIT_CUT
-        MENUITEM "复制(&C)\tCtrl+C",              ID_EDIT_COPY
-        MENUITEM "粘贴(&P)\tCtrl+V",              ID_EDIT_PASTE
     END
     POPUP "视图(&V)"
     BEGIN
@@ -600,6 +582,12 @@ BEGIN
     IDS_BUILD_TAB           "生成"
     IDS_DEBUG_TAB           "调试"
     IDS_FIND_TAB            "查找"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_BUTTON_STOP          "暂停监控"
+    ID_BUTTON_MONITOR       "开始监控"
 END
 
 #endif    // 中文(中华人民共和国) resources

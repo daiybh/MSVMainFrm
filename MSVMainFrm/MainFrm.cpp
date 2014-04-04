@@ -33,6 +33,10 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
 	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnApplicationLook)
 	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_OFF_2007_AQUA, &CMainFrame::OnUpdateApplicationLook)
+	ON_COMMAND(ID_BUTTON_STOP, &CMainFrame::OnButtonStop)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_STOP, &CMainFrame::OnUpdateButtonStop)
+	ON_COMMAND(ID_BUTTON_MONITOR, &CMainFrame::OnButtonMonitor)
+	ON_UPDATE_COMMAND_UI(ID_BUTTON_MONITOR, &CMainFrame::OnUpdateButtonMonitor)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -430,4 +434,30 @@ LRESULT CMainFrame::onMsgAttachWnd( WPARAM wParam,LPARAM lParam )
 	DWORD dId = (DWORD)wParam;
 	StartWork(dId,TRUE);
 	return 1;
+}
+
+BOOL bPause=FALSE;
+void CMainFrame::OnButtonStop()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_ProcessMonitor.PauseMonitor();
+	bPause=TRUE;
+}
+void CMainFrame::OnUpdateButtonStop(CCmdUI *pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(bPause);
+}
+
+void CMainFrame::OnButtonMonitor()
+{
+	// TODO: 在此添加命令处理程序代码
+	m_ProcessMonitor.ResumeMonitor();
+	bPause=FALSE;
+}
+
+void CMainFrame::OnUpdateButtonMonitor(CCmdUI *pCmdUI)
+{
+	// TODO: 在此添加命令更新用户界面处理程序代码
+	pCmdUI->SetCheck(!bPause);
 }

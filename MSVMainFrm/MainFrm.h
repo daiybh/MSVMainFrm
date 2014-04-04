@@ -69,6 +69,11 @@ protected:
 
 	BOOL CreateDockingWindows();
 	void SetDockingWindowIcons(BOOL bHiColorIcons);
+public:
+	afx_msg void OnButtonStop();
+	afx_msg void OnUpdateButtonStop(CCmdUI *pCmdUI);
+	afx_msg void OnButtonMonitor();
+	afx_msg void OnUpdateButtonMonitor(CCmdUI *pCmdUI);
 };
 
 
