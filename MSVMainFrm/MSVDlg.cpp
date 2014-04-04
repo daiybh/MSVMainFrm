@@ -38,9 +38,9 @@ BOOL CMSVDlg::StartWork( LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess/*=FALSE*
 {
 	m_strExePath = lpStrExePath;
 	HWND hWnd = m_hWnd;
-	CWnd*pMask = GetDlgItem(IDC_STATIC_MASK);
-	if(pMask)
-		hWnd=pMask->m_hWnd;	
+// 	CWnd*pMask = GetDlgItem(IDC_STATIC_MASK);
+// 	if(pMask)
+// 		hWnd=pMask->m_hWnd;	
 	return AttachExeToWnd(m_strExePath,hWnd,m_hWnd,bAlwaysCreateProcess);	
 }
 // CMSVDlg 消息处理程序
