@@ -91,3 +91,4 @@ BOOL CMSVMainFrmDoc::OnOpenDocument(LPCTSTR lpszPathName)
 	m_nFilePos = _ttoi(sTemp.Mid(nPos+1));
 	return TRUE;
 }
+

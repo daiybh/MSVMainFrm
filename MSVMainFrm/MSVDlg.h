@@ -85,10 +85,12 @@ public:
 		}
 		CWnd *cWnd=CWnd::FromHandle(arg.hWnd);
 		//Òþ²Ø±êÌâÀ¸
+		CString strTemp;
 
-		cWnd->GetWindowText(strTitle);
-
+		cWnd->GetWindowText(strTemp);
+		strTitle.Format(_T("[%d]%s"),arg.dwProcessId,strTemp);
 		::SetWindowText(hParentWnd,_T(""));
+		
 		::SetWindowText((hDlgWnd==NULL)?hParentWnd:hDlgWnd,strTitle);
 		cWnd->ModifyStyle(WS_CAPTION,0);
 		//Òþ²Ø±ß¿ò

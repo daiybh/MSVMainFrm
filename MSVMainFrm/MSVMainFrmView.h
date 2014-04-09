@@ -47,6 +47,7 @@ protected:
 
 	afx_msg void OnActivateView(BOOL bActivate, CView* pActivateView, CView* pDeactiveView);
 	DECLARE_MESSAGE_MAP()
+	LRESULT onResize(WPARAM wParam,LPARAM lParam);
 };
 
 #ifndef _DEBUG  // MSVMainFrmView.cpp 中的调试版本

@@ -11,7 +11,9 @@ typedef struct tag_AttachDlgInfo{
 	CString strTitle;//displayName
 	CMSVDlg	*pAttachDlg;
 	CWnd	*hParentWnd;
+	CFrameWnd * hFrameWnd;
 	stGroupInfo *pstGroupInfo;
+	HTREEITEM  pTreePosItem;//对应树的节点指针
 	
 	tag_AttachDlgInfo(){
 		 pAttachDlg =NULL;
@@ -19,6 +21,8 @@ typedef struct tag_AttachDlgInfo{
 		nProcessID = 0;
 		nCurID=0;
 		pstGroupInfo =NULL;
+		pTreePosItem = NULL;
+		hFrameWnd = NULL;
 	}
 }AttachDlgInfoData;
 

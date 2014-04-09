@@ -51,6 +51,10 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 		pInfo->strGroupName = strTemp;
 		m_mapGroupInfo[i] = pInfo;
 	}
+	stGroupInfo *pInfo = new stGroupInfo;
+	pInfo->nGroupID = 20140409;//magicNum 组id 不会到这个数吧。
+	pInfo->strGroupName=_T("UnKnownGroup");
+	m_mapGroupInfo[pInfo->nGroupID] = pInfo;
 
 	int processCount = GetPrivateProfileInt(_T("process"),_T("count"),0,strIni);
 	for (int i=0;i<processCount;i++)
@@ -63,12 +67,15 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 		getRealPath(strTemp);
 		lpData->strExePath =  strTemp;
 		GetPrivateProfileString(strAppName,_T("displayname"),_T(""),strTemp,255,strIni);
-		int nGroupID = GetPrivateProfileInt(strAppName,_T("groupID"),-1,strIni);
+		int nGroupID = GetPrivateProfileInt(strAppName,_T("groupID"),pInfo->nGroupID,strIni);
 
 		std::map<int ,stGroupInfo*>::iterator it ;
 		it = m_mapGroupInfo.find(nGroupID);
 		if(it !=m_mapGroupInfo.end())
 			lpData->pstGroupInfo =it->second;
+		else{
+			lpData->pstGroupInfo = pInfo;
+		}
 		
 		lpData->pAttachDlg = NULL;
 		CMSVDlg*pDlg = new CMSVDlg();
@@ -125,6 +132,7 @@ BOOL CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,CString &strTi
 		if(pDlg)
 		{
 			CWnd*pPp = (pParentWnd==NULL)?pData->hParentWnd:pParentWnd;
+
 			::SetParent(pDlg->m_hWnd,pPp->m_hWnd);		
 
 			if(!pDlg->IsWindowVisible()||bAlwaysCreateProcess)
@@ -137,6 +145,7 @@ BOOL CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,CString &strTi
 					pDlg->ShowWindow(SW_SHOW);
 					pPp->ShowWindow(SW_SHOW);
 					pPp->ActivateTopParent();
+
 					return TRUE;
 				}
 			}else if(pDlg->IsWindowVisible())

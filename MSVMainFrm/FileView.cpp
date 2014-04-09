@@ -75,8 +75,7 @@ int CFileView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 所有命令将通过此控件路由，而不是通过主框架路由:
 	m_wndToolBar.SetRouteCommandsViaFrame(FALSE);
 
-	// 填入一些静态树视图数据(此处只需填入虚拟代码，而不是复杂的数据)
-	FillFileView();
+	// 填入一些静态树视图数据(此处只需填入虚拟代码，而不是复杂的数据)	
 	AdjustLayout();
 
 	return 0;
@@ -91,26 +90,46 @@ void CFileView::OnSize(UINT nType, int cx, int cy)
 void CFileView::FillView( CChildAttachDialogMan *pAttachMan )
 {
 	m_wndFileView.DeleteAllItems();
-	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("MSV通道管理"), 0, 0);
-	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
-	HTREEITEM hSrc = m_wndFileView.InsertItem(_T("MSV采集窗口"), 0, 0, hRoot);
+	/*
+	HTREEITEM hUnKnownGroup = m_wndFileView.InsertItem(_T("UnKnownGroup"), 0, 0);
 
 	for (int i=0;i<pAttachMan->m_arrAttachDlgInfoData.GetSize();i++)
 	{
 		CString itemname;
-		int nCurID = pAttachMan->m_arrAttachDlgInfoData.GetAt(i)->nCurID;
-		itemname.Format(_T("%d_%d"),i,nCurID);
-		HTREEITEM hItm=m_wndFileView.InsertItem(itemname, 1, 1, hSrc);
-		m_wndFileView.SetItemData(hItm,(DWORD)i);		
-	}
-}
-void CFileView::FillFileView()
-{
-	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("MSV通道管理"), 0, 0);
-	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
+		AttachDlgInfoData *pData = pAttachMan->m_arrAttachDlgInfoData.GetAt(i);
 
-	m_wndFileView.Expand(hRoot, TVE_EXPAND);
+		int nCurID = pData->nCurID;
+
+		itemname.Format(_T("%d_%d"),i,nCurID);
+		pData->pTreePosItem=m_wndFileView.InsertItem(itemname, 1, 1, hUnKnownGroup);
+		m_wndFileView.SetItemData(pData->pTreePosItem,i+1);		
+	}
+/**/
+	std::map<int ,stGroupInfo*>::iterator it= pAttachMan->m_mapGroupInfo.begin();
+	for (;it!=pAttachMan->m_mapGroupInfo.end();++it)
+	{
+		stGroupInfo*pGroupInfo = it->second;
+		HTREEITEM hSrc = m_wndFileView.InsertItem(pGroupInfo->strGroupName, 0, 0);
+		for (int i=0;i<pAttachMan->m_arrAttachDlgInfoData.GetSize();i++)
+		{
+			AttachDlgInfoData *pData = pAttachMan->m_arrAttachDlgInfoData.GetAt(i);
+			if(pData->pstGroupInfo==pGroupInfo)
+			{
+				CString itemname;
+				itemname.Format(_T("%d_%d"),i,pData->nCurID);
+				if(pData->pTreePosItem!=NULL)
+					m_wndFileView.DeleteItem(pData->pTreePosItem);
+				pData->pTreePosItem=m_wndFileView.InsertItem(itemname, 1, 1, hSrc);
+				m_wndFileView.SetItemData(pData->pTreePosItem,i+1);	
+			}
+		}
+	}
+// 
+// 	if(m_wndFileView.GetChildItem(hUnKnownGroup)==NULL){
+// 		m_wndFileView.DeleteItem(hUnKnownGroup);
+// 	}
 }
+
 
 void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 {

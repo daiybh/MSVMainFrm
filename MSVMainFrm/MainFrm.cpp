@@ -191,6 +191,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	CMDIFrameWndEx::EnableLoadDockState(TRUE) ;
+
+	m_wndFileView.FillView(&m_ChildProcessMan);
 	SetTimer(1,1000,NULL);
 	return 0;
 }
@@ -419,9 +421,13 @@ CWnd *_getActiveView(CMainFrame*pThis)
 	CWnd *pWnd = pFrameWnd->GetActiveView();
 	return (pWnd==NULL)?pFrameWnd:pWnd;
 }
+void CMainFrame::ActiveWindow(DWORD dwID)
+{
+	AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwID);
+	pData->hFrameWnd->ActivateFrame(SW_RESTORE);
+}
 BOOL  CMainFrame::StartWork( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
-
 	CString strLog;
 	strLog.Format(_T("StartWork id=%d----%d"),dwItmeData,GetCountCMDIChildWnds());
 	m_wndOutput.AddBuildinfo(strLog);
@@ -432,8 +438,13 @@ BOOL  CMainFrame::StartWork( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCrea
 	BOOL bRet =  m_ChildProcessMan.StartWork(dwItmeData,NULL,strTitle,bAlwaysCreateProcess);
 	if(bRet)
 	{
-		//;
-		
+		AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwItmeData);
+		m_wndFileView.SetItemTitle(pData->pTreePosItem,strTitle);	
+		//修改frameWnd 的大小
+		pData->hFrameWnd->ActivateFrame(SW_RESTORE);
+//		CMSVMainFrmView*pView = (CMSVMainFrmView*)pData->hParentWnd;
+//		pView->ResizeParentToFit();
+		pData->hParentWnd->SendMessage(WM_USER+120,0,0);
 	}
 	return bRet;
 }
@@ -443,24 +454,21 @@ LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 	xx.Format(_T("ViewCom--%x--%d"),wParam,lParam);
 	m_wndOutput.AddBuildinfo(xx);
 	CWnd *pWnd = (CWnd*)wParam;
-	static CWnd* g_pWnd = NULL;
+	CFrameWnd *pFrameWnd =(CFrameWnd*)wParam;
 	
 	int nGroupID = (int )lParam;
-	if(nGroupID ==20140409 ){
-		g_pWnd = pWnd;
-
-	}
 	{
 		for (int i=0;i<m_ChildProcessMan.m_arrAttachDlgInfoData.GetCount();i++)
 		{
 			AttachDlgInfoData *pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(i);
-			if(pData->pstGroupInfo && (nGroupID!=20140409))//unknown docView				
+			if(pData->pstGroupInfo)//unknown docView				
 			{
 				if(pData->pstGroupInfo->nGroupID == nGroupID){
-					pData->hParentWnd = pWnd;
+					pData->hParentWnd = pFrameWnd->GetActiveView();
+					pData->hFrameWnd = pFrameWnd;
 				}
 			}else{
-				pData->hParentWnd =g_pWnd?g_pWnd:this;
+				pData->hParentWnd =this;
 			}
 		}
 	}
@@ -509,7 +517,7 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	KillTimer(1);
 	{
 		//创建一堆 doc view
-		AfxGetApp()->OpenDocumentFile(_T("unKnownGroup@20140409"));
+		//AfxGetApp()->OpenDocumentFile(_T("unKnownGroup@20140409"));
 
 		std::map<int,stGroupInfo*>::iterator it = m_ChildProcessMan.m_mapGroupInfo.begin();
 		for(;it!=m_ChildProcessMan.m_mapGroupInfo.end();++it)
@@ -521,7 +529,6 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		}
 	}
 
-	m_wndFileView.FillView(&m_ChildProcessMan);
 	
 	
 	m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);

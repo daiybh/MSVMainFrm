@@ -22,6 +22,8 @@ public:
 	void AdjustLayout();
 	void OnChangeVisualStyle();
 	void FillView(CChildAttachDialogMan *pAttachMan);
+	void SetItemTitle(HTREEITEM hItem,LPCTSTR lpStrTitle){m_wndFileView.SetItemText(hItem,lpStrTitle);
+	};
 //  Ù–‘
 protected:
 
@@ -30,7 +32,6 @@ protected:
 	CFileViewToolBar m_wndToolBar;
 
 protected:
-	void FillFileView();
 
 //  µœ÷
 public:

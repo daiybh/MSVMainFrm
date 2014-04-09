@@ -18,6 +18,7 @@
 IMPLEMENT_DYNCREATE(CMSVMainFrmView, CFormView)
 
 BEGIN_MESSAGE_MAP(CMSVMainFrmView, CFormView)
+	ON_MESSAGE(WM_USER+120,onResize)
 END_MESSAGE_MAP()
 
 // CMSVMainFrmView ¹¹Ôì/Îö¹¹
@@ -54,7 +55,8 @@ void CMSVMainFrmView::OnInitialUpdate()
 #endif	
 
 	int iPos = GetDocument()->m_nFilePos;
-	AfxGetMainWnd()->SendMessage(WM_USER+101,WPARAM(this),iPos);
+	CWnd * ppp=this->GetParentFrame()->GetActiveView();
+	AfxGetMainWnd()->SendMessage(WM_USER+101,WPARAM(this->GetParentFrame()),iPos);
 }
 
 void CMSVMainFrmView::OnRButtonUp(UINT nFlags, CPoint point)
@@ -101,4 +103,11 @@ void CMSVMainFrmView::OnActivateView(BOOL bActivate, CView* pActivateView, CView
 	{
 		
 	}
+}
+
+LRESULT CMSVMainFrmView::onResize( WPARAM wParam,LPARAM lParam )
+{
+	GetParentFrame()->RecalcLayout();
+	ResizeParentToFit(FALSE);
+	return 1;
 }

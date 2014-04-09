@@ -77,6 +77,7 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	CMDIChildWnd * GetNextMDIChildWnd();
 	int			GetCountCMDIChildWnds();
+	void ActiveWindow(DWORD dwID);
 	CWnd*   m_pWndCurrentChild; 
 	CWnd	m_wndMDIClient;
 };
