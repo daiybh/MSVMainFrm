@@ -55,7 +55,7 @@ void CMSVMainFrmView::OnInitialUpdate()
 #endif	
 
 	int iPos = GetDocument()->m_nFilePos;
-	CWnd * ppp=this->GetParentFrame()->GetActiveView();
+	this->GetParentFrame()->ShowWindow(SW_MINIMIZE);
 	AfxGetMainWnd()->SendMessage(WM_USER+101,WPARAM(this->GetParentFrame()),iPos);
 }
 

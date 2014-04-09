@@ -41,7 +41,6 @@ BOOL CChildFrame::PreCreateWindow(CREATESTRUCT& cs)
 	//cs.style &= ~(WS_MAXIMIZEBOX);
 
 //	cs.style |= WS_BORDER;
-
 	return TRUE;
 }
 

@@ -441,7 +441,7 @@ BOOL  CMainFrame::StartWork( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCrea
 		AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwItmeData);
 		m_wndFileView.SetItemTitle(pData->pTreePosItem,strTitle);	
 		//修改frameWnd 的大小
-		pData->hFrameWnd->ActivateFrame(SW_RESTORE);
+	//	pData->hFrameWnd->ActivateFrame(SW_MINIMIZE);
 //		CMSVMainFrmView*pView = (CMSVMainFrmView*)pData->hParentWnd;
 //		pView->ResizeParentToFit();
 		pData->hParentWnd->SendMessage(WM_USER+120,0,0);

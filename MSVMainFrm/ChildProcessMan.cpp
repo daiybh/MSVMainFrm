@@ -51,12 +51,14 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 		pInfo->strGroupName = strTemp;
 		m_mapGroupInfo[i] = pInfo;
 	}
-	stGroupInfo *pInfo = new stGroupInfo;
-	pInfo->nGroupID = 20140409;//magicNum 组id 不会到这个数吧。
-	pInfo->strGroupName=_T("UnKnownGroup");
-	m_mapGroupInfo[pInfo->nGroupID] = pInfo;
+	stGroupInfo *pUnKnownGroupInfo = new stGroupInfo;
+	pUnKnownGroupInfo->nGroupID = 20140409;//magicNum 组id 不会到这个数吧。
+	pUnKnownGroupInfo->strGroupName=_T("UnKnownGroup");
+	std::pair<std::map<int,stGroupInfo*>::iterator,bool> retInsertMap
+		= m_mapGroupInfo.insert(std::pair<int,stGroupInfo*>(pUnKnownGroupInfo->nGroupID,pUnKnownGroupInfo));
 
 	int processCount = GetPrivateProfileInt(_T("process"),_T("count"),0,strIni);
+	BOOL bHadUnKnownGroupInfo=FALSE;
 	for (int i=0;i<processCount;i++)
 	{
 		AttachDlgInfoData *lpData = new AttachDlgInfoData;
@@ -67,14 +69,15 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 		getRealPath(strTemp);
 		lpData->strExePath =  strTemp;
 		GetPrivateProfileString(strAppName,_T("displayname"),_T(""),strTemp,255,strIni);
-		int nGroupID = GetPrivateProfileInt(strAppName,_T("groupID"),pInfo->nGroupID,strIni);
+		int nGroupID = GetPrivateProfileInt(strAppName,_T("groupID"),pUnKnownGroupInfo->nGroupID,strIni);
 
 		std::map<int ,stGroupInfo*>::iterator it ;
 		it = m_mapGroupInfo.find(nGroupID);
 		if(it !=m_mapGroupInfo.end())
 			lpData->pstGroupInfo =it->second;
 		else{
-			lpData->pstGroupInfo = pInfo;
+			lpData->pstGroupInfo = pUnKnownGroupInfo;
+			bHadUnKnownGroupInfo = TRUE;
 		}
 		
 		lpData->pAttachDlg = NULL;
@@ -82,6 +85,9 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 		pDlg ->Create(IDD_MSVDLG);
 		lpData->pAttachDlg = pDlg;
 		AddToArr(lpData);
+	}
+	if(!bHadUnKnownGroupInfo && retInsertMap.second){
+		m_mapGroupInfo.erase(retInsertMap.first);
 	}
 
 /*
