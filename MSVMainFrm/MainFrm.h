@@ -27,7 +27,7 @@ public:
 
 // ²Ù×÷
 public:
-	void StartWork(DWORD dwItmeData,BOOL bAlwaysCreateProcess=FALSE);	
+	BOOL StartWork(DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess=FALSE);	
 
 
 
@@ -74,6 +74,11 @@ public:
 	afx_msg void OnUpdateButtonStop(CCmdUI *pCmdUI);
 	afx_msg void OnButtonMonitor();
 	afx_msg void OnUpdateButtonMonitor(CCmdUI *pCmdUI);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	CMDIChildWnd * GetNextMDIChildWnd();
+	int			GetCountCMDIChildWnds();
+	CWnd*   m_pWndCurrentChild; 
+	CWnd	m_wndMDIClient;
 };
 
 

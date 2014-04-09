@@ -1,13 +1,26 @@
 #include "StdAfx.h"
 #include "ChildProcessMan.h"
 #include "MSVDlg.h"
+void doCopy(TCHAR *pSrcPath,TCHAR *pDestPath,int nSize){
+	_tcsncpy(pDestPath,pSrcPath,nSize);
+}
+void getRealPath(TCHAR * pSrcPath)
+{
+	TCHAR *pSrcCurPos = pSrcPath;	
+	TCHAR * cp = pSrcPath;
+
+	while( *cp++ = *pSrcCurPos++ )
+	{
+		if(*pSrcCurPos=='\\')pSrcCurPos++;
+	}	              
+
+}
 CChildAttachDialogMan::CChildAttachDialogMan(void)
 {
-	m_pParentWnd=NULL;
 	CString strExeArr[]={_T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe"),
 		_T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MgAvWriterU.exe")};
 	m_arrAttachDlgInfoData.RemoveAll();
-	{
+	if(0){
 		//testData
 		for(int i=0;i<2;i++)
 		{
@@ -21,26 +34,89 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 			lpData->pAttachDlg = pDlg;
 
 			AddToArr(lpData);
-		}
-
-		
+		}		
 	}
+	CString strIni;
+	strIni=_T("c:\\process.ini");
+	int groupCount = GetPrivateProfileInt(_T("group"),_T("count"),0,strIni);
+	for (int i=0;i<groupCount;i++)
+	{
+		//read group INFO
+		stGroupInfo *pInfo = new stGroupInfo;
+		TCHAR strTemp[255];
+		CString strkeyName;
+		strkeyName.Format(_T("groupname_%d"),i);
+		GetPrivateProfileString(_T("group"),strkeyName,_T(""),strTemp,255,strIni);
+		pInfo->nGroupID = i;
+		pInfo->strGroupName = strTemp;
+		m_mapGroupInfo[i] = pInfo;
+	}
+
+	int processCount = GetPrivateProfileInt(_T("process"),_T("count"),0,strIni);
+	for (int i=0;i<processCount;i++)
+	{
+		AttachDlgInfoData *lpData = new AttachDlgInfoData;
+		TCHAR strTemp[255];
+		CString strAppName;
+		strAppName.Format(_T("process_%d"),i);
+		GetPrivateProfileString(strAppName,_T("path"),_T(""),strTemp,255,strIni);
+		getRealPath(strTemp);
+		lpData->strExePath =  strTemp;
+		GetPrivateProfileString(strAppName,_T("displayname"),_T(""),strTemp,255,strIni);
+		int nGroupID = GetPrivateProfileInt(strAppName,_T("groupID"),-1,strIni);
+
+		std::map<int ,stGroupInfo*>::iterator it ;
+		it = m_mapGroupInfo.find(nGroupID);
+		if(it !=m_mapGroupInfo.end())
+			lpData->pstGroupInfo =it->second;
+		
+		lpData->pAttachDlg = NULL;
+		CMSVDlg*pDlg = new CMSVDlg();
+		pDlg ->Create(IDD_MSVDLG);
+		lpData->pAttachDlg = pDlg;
+		AddToArr(lpData);
+	}
+
+/*
+ normal
+ [group]
+ count=
+ groupname_0=
+ groupname_1=
+
+ [process]
+ count=1
+
+ [process_0]
+ path=
+ displayname=
+ groupname=
+ groupID=
+
+ */
+
 }
 
 CChildAttachDialogMan::~CChildAttachDialogMan(void)
 {
 }
 
-void CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,BOOL bAlwaysCreateProcess/*=FALSE*/ )
+
+BOOL CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,CString &strTitle,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {	
-	if(dwID>m_arrAttachDlgInfoData.GetSize())return;
+	if(dwID>=m_arrAttachDlgInfoData.GetSize())
+	{
+		return FALSE;
+	}
+
 	{
 		AttachDlgInfoData*pData = m_arrAttachDlgInfoData.GetAt(dwID);
+		if(pData==NULL)return FALSE;
 		CMSVDlg*pDlg = pData->pAttachDlg;
 		if(pDlg==NULL)
 		{
 			pDlg = new CMSVDlg();
-			CWnd*pPp = (pParentWnd==NULL)?m_pParentWnd:pParentWnd;
+			CWnd*pPp = (pParentWnd==NULL)?pData->hParentWnd:pParentWnd;
 			pDlg ->Create(IDD_MSVDLG,pPp);
 			::SetParent(pDlg->m_hWnd,pPp->m_hWnd);
 			pDlg->ShowWindow(SW_HIDE);
@@ -48,35 +124,33 @@ void CChildAttachDialogMan::StartWork( DWORD dwID,CWnd*pParentWnd,BOOL bAlwaysCr
 		}
 		if(pDlg)
 		{
-
-			CWnd*pPp = (pParentWnd==NULL)?m_pParentWnd:pParentWnd;
+			CWnd*pPp = (pParentWnd==NULL)?pData->hParentWnd:pParentWnd;
 			::SetParent(pDlg->m_hWnd,pPp->m_hWnd);		
 
 			if(!pDlg->IsWindowVisible()||bAlwaysCreateProcess)
 			{				
-				pDlg->StartWork(pData->strExePath,bAlwaysCreateProcess);
-				pDlg->ShowWindow(SW_SHOW);
+				BOOL bRet = pDlg->AttachExeToWnd(pData->strExePath,pDlg->m_hWnd,bAlwaysCreateProcess);
+			//	bRet = pDlg->StartWork(pData->strExePath,bAlwaysCreateProcess);
+				if(bRet)
+				{
+					strTitle= pData->strTitle = pDlg->strTitle;
+					pDlg->ShowWindow(SW_SHOW);
+					pPp->ShowWindow(SW_SHOW);
+					pPp->ActivateTopParent();
+					return TRUE;
+				}
+			}else if(pDlg->IsWindowVisible())
+			{
+				strTitle= pData->strTitle;
+				pPp->ShowWindow(SW_SHOW);
+				pPp->ActivateTopParent();
+				return TRUE;
 			}
 		}
 	}
+	return FALSE;
 }
 
-void CChildAttachDialogMan::CreateChildDlg()
-{
-	if(m_pParentWnd==NULL)return;
-	for (int n=0;n<m_arrAttachDlgInfoData.GetSize();n++)
-	{
-		AttachDlgInfoData * pData = m_arrAttachDlgInfoData.GetAt(n);
-		if(pData&&pData->pAttachDlg==NULL)		
-		{
-			CMSVDlg*pDlg = new CMSVDlg();
-			pDlg ->Create(IDD_MSVDLG,m_pParentWnd);
-			::SetParent(pDlg->m_hWnd,m_pParentWnd->m_hWnd);
-			pDlg->ShowWindow(SW_HIDE);
-			pData->pAttachDlg = pDlg;
-		}
-	}
-}
 
 void CChildAttachDialogMan::AddToArr( AttachDlgInfoData*pData )
 {

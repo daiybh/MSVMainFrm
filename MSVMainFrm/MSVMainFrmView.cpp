@@ -52,6 +52,9 @@ void CMSVMainFrmView::OnInitialUpdate()
 #ifdef use_mdi_Framewnd
 	ResizeParentToFit();//自动调整框架大小
 #endif	
+
+	int iPos = GetDocument()->m_nFilePos;
+	AfxGetMainWnd()->SendMessage(WM_USER+101,WPARAM(this),iPos);
 }
 
 void CMSVMainFrmView::OnRButtonUp(UINT nFlags, CPoint point)
@@ -96,8 +99,6 @@ void CMSVMainFrmView::OnActivateView(BOOL bActivate, CView* pActivateView, CView
 	CFormView::OnActivateView(bActivate, pActivateView, pDeactiveView);
 	if(bActivate)
 	{
-
-		AfxGetMainWnd()->SendMessage(WM_USER+101,0,0);
-
+		
 	}
 }

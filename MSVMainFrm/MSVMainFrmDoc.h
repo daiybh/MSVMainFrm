@@ -14,7 +14,8 @@ protected: // 仅从序列化创建
 
 // 属性
 public:
-
+	CString m_strGroupName;
+	int		m_nFilePos;
 // 操作
 public:
 

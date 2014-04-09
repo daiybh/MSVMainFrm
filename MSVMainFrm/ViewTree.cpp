@@ -62,13 +62,23 @@ void CViewTree::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 	if( NULL != hSelect )
 	{
+
 		HTREEITEM hChildItem = GetChildItem(hSelect);
 		if(hChildItem==NULL)
 		{
 			//CString str = pTreeCtrl->GetItemText(hSelect);
 
-			DWORD dwData = pTreeCtrl->GetItemData(hSelect);        
-			((CMainFrame*)AfxGetMainWnd())->StartWork(dwData);
+			DWORD dwData = pTreeCtrl->GetItemData(hSelect);  
+			CString strTitle;
+
+			//AfxGetApp()->PostThreadMessage(ID_FILE_NEW,0,0);;
+		//	AfxGetMainWnd()->SendMessage(WM_COMMAND,ID_FILE_NEW,0);
+			
+			//*
+			if(((CMainFrame*)AfxGetMainWnd())->StartWork(dwData,strTitle))
+			{
+				this->SetItemText(hSelect,strTitle);
+			}/**/
 		}
 	}
 	*pResult = 0;

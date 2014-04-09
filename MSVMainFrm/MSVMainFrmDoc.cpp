@@ -78,9 +78,16 @@ void CMSVMainFrmDoc::Dump(CDumpContext& dc) const
 
 BOOL CMSVMainFrmDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-	if (!CDocument::OnOpenDocument(lpszPathName))
-		return FALSE;
+	//if (!CDocument::OnOpenDocument(lpszPathName))
+	//	return FALSE;
 	// TODO:  在此添加您专用的创建代码
+	m_strGroupName= lpszPathName;
+	//只要文件名字 并转换为 int
+	int nPos = m_strGroupName.ReverseFind('\\');
+	CString sTemp = m_strGroupName.Mid(nPos+1);
+	nPos = sTemp.Find('@');
 
+	m_strGroupName = sTemp.Left(nPos);
+	m_nFilePos = _ttoi(sTemp.Mid(nPos+1));
 	return TRUE;
 }

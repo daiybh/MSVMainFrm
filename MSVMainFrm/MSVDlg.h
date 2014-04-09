@@ -86,11 +86,10 @@ public:
 		CWnd *cWnd=CWnd::FromHandle(arg.hWnd);
 		//Òþ²Ø±êÌâÀ¸
 
-		CString rString;
-		cWnd->GetWindowText(rString);
+		cWnd->GetWindowText(strTitle);
 
 		::SetWindowText(hParentWnd,_T(""));
-		::SetWindowText((hDlgWnd==NULL)?hParentWnd:hDlgWnd,rString);
+		::SetWindowText((hDlgWnd==NULL)?hParentWnd:hDlgWnd,strTitle);
 		cWnd->ModifyStyle(WS_CAPTION,0);
 		//Òþ²Ø±ß¿ò
 		cWnd->ModifyStyle(WS_THICKFRAME,1);
@@ -137,8 +136,10 @@ public:
 	DWORD m_dwProcessId;
 	HWND	m_hParentWnd;
 	BOOL    m_bIsLoad;
+	public:
+	CString strTitle;
 };
-class CMSVDlg : public CDialog,CCreateProcessWnd
+class CMSVDlg : public CDialog,public CCreateProcessWnd
 {
 	DECLARE_DYNAMIC(CMSVDlg)
 public:

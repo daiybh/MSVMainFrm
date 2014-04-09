@@ -101,7 +101,7 @@ void CFileView::FillView( CChildAttachDialogMan *pAttachMan )
 		int nCurID = pAttachMan->m_arrAttachDlgInfoData.GetAt(i)->nCurID;
 		itemname.Format(_T("%d_%d"),i,nCurID);
 		HTREEITEM hItm=m_wndFileView.InsertItem(itemname, 1, 1, hSrc);
-		m_wndFileView.SetItemData(hItm,(DWORD)i);
+		m_wndFileView.SetItemData(hItm,(DWORD)i);		
 	}
 }
 void CFileView::FillFileView()
@@ -109,45 +109,7 @@ void CFileView::FillFileView()
 	HTREEITEM hRoot = m_wndFileView.InsertItem(_T("MSV通道管理"), 0, 0);
 	m_wndFileView.SetItemState(hRoot, TVIS_BOLD, TVIS_BOLD);
 
-	HTREEITEM hSrc = m_wndFileView.InsertItem(_T("MSV采集窗口"), 0, 0, hRoot);
-
-	AttachDlgInfoData *lpData = NULL;
-	HTREEITEM hItm=m_wndFileView.InsertItem(_T("MSV_3100"), 1, 1, hSrc);
-    lpData = new AttachDlgInfoData;
-
-	lpData->strExePath = //_T("F:\\WORK\\MSV\\MSV\\V5.4(Pro2.2)\\Middle\\binU\\MSVMainAppU.exe");
-	lpData->strExePath =  _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MSVMainAppU.exe");
-	m_wndFileView.SetItemData(hItm,(DWORD)lpData);
-	m_wndFileView.InsertItem(_T("MSV_3102"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("MSV_3104"), 1, 1, hSrc);
-	m_wndFileView.InsertItem(_T("MSV_3106"), 1, 1, hSrc);
-
-
-	HTREEITEM hInc = m_wndFileView.InsertItem(_T("MSV迁移客户端"), 0, 0, hRoot);
-
-	hItm=m_wndFileView.InsertItem(_T("Client_3100"), 2, 2, hInc);
-
-	lpData = new AttachDlgInfoData;
-
-	lpData->strExePath = //_T("F:\\WORK\\MSV\\MSV\\V5.4(Pro2.2)\\Middle\\binU\\MSVMainAppU.exe");
-	lpData->strExePath =  _T("U:\\V5.5(Pro2.3)\\Middle\\binU\\MgAvWriterU.exe");
-	m_wndFileView.SetItemData(hItm,(DWORD)lpData);
-
-	m_wndFileView.InsertItem(_T("Client_3102"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("Client_3104"), 2, 2, hInc);
-	m_wndFileView.InsertItem(_T("Client_3106"), 2, 2, hInc);
-
-
-	HTREEITEM hRes = m_wndFileView.InsertItem(_T("MSV迁移服户端"), 0, 0, hRoot);
-
-	m_wndFileView.InsertItem(_T("Server_3100"), 2, 2, hRes);
-	m_wndFileView.InsertItem(_T("Server_3102"), 2, 2, hRes);
-	m_wndFileView.InsertItem(_T("Server_3104"), 2, 2, hRes);
-	m_wndFileView.InsertItem(_T("Server_3106"), 2, 2, hRes);
-
 	m_wndFileView.Expand(hRoot, TVE_EXPAND);
-	m_wndFileView.Expand(hSrc, TVE_EXPAND);
-	m_wndFileView.Expand(hInc, TVE_EXPAND);
 }
 
 void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)

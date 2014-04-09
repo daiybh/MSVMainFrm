@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_STOP, &CMainFrame::OnUpdateButtonStop)
 	ON_COMMAND(ID_BUTTON_MONITOR, &CMainFrame::OnButtonMonitor)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_MONITOR, &CMainFrame::OnUpdateButtonMonitor)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -63,7 +64,11 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CMDIFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
-
+/*
+	if(m_wndMDIClient.Attach(m_hWndMDIClient)==0){
+		return -1;
+	}
+	/**/
 	BOOL bNameValid;
 	// 基于持久值设置视觉管理器和样式
 	OnApplicationLook(theApp.m_nAppLook);
@@ -186,6 +191,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	CMDIFrameWndEx::EnableLoadDockState(TRUE) ;
+	SetTimer(1,1000,NULL);
 	return 0;
 }
 
@@ -413,30 +419,59 @@ CWnd *_getActiveView(CMainFrame*pThis)
 	CWnd *pWnd = pFrameWnd->GetActiveView();
 	return (pWnd==NULL)?pFrameWnd:pWnd;
 }
-void CMainFrame::StartWork( DWORD dwItmeData,BOOL bAlwaysCreateProcess/*=FALSE*/ )
+BOOL  CMainFrame::StartWork( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
 
 	CString strLog;
-	strLog.Format(_T("StartWork id=%d"),dwItmeData);
+	strLog.Format(_T("StartWork id=%d----%d"),dwItmeData,GetCountCMDIChildWnds());
 	m_wndOutput.AddBuildinfo(strLog);
-	m_ChildProcessMan.StartWork(dwItmeData,_getActiveView(this),bAlwaysCreateProcess);
+	{
+		//根据id 获取对应的view
+
+	}
+	BOOL bRet =  m_ChildProcessMan.StartWork(dwItmeData,NULL,strTitle,bAlwaysCreateProcess);
+	if(bRet)
+	{
+		//;
+		
+	}
+	return bRet;
 }
 LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 {
-	static BOOL g_bHadComplete=FALSE;
-	if(g_bHadComplete)return 1;
-	g_bHadComplete=TRUE;
-	m_ChildProcessMan.setParentWnd(_getActiveView(this));	
-	m_wndFileView.FillView(&m_ChildProcessMan);
-	m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);
+	CString xx;
+	xx.Format(_T("ViewCom--%x--%d"),wParam,lParam);
+	m_wndOutput.AddBuildinfo(xx);
+	CWnd *pWnd = (CWnd*)wParam;
+	static CWnd* g_pWnd = NULL;
+	
+	int nGroupID = (int )lParam;
+	if(nGroupID ==20140409 ){
+		g_pWnd = pWnd;
 
+	}
+	{
+		for (int i=0;i<m_ChildProcessMan.m_arrAttachDlgInfoData.GetCount();i++)
+		{
+			AttachDlgInfoData *pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(i);
+			if(pData->pstGroupInfo && (nGroupID!=20140409))//unknown docView				
+			{
+				if(pData->pstGroupInfo->nGroupID == nGroupID){
+					pData->hParentWnd = pWnd;
+				}
+			}else{
+				pData->hParentWnd =g_pWnd?g_pWnd:this;
+			}
+		}
+	}
 	return 1;
 }
 
 LRESULT CMainFrame::onMsgAttachWnd( WPARAM wParam,LPARAM lParam )
 {
 	DWORD dId = (DWORD)wParam;
-	StartWork(dId,TRUE);
+	CString strTitle;
+	StartWork(dId,strTitle,TRUE);
 	return 1;
 }
 
@@ -466,4 +501,72 @@ void CMainFrame::OnUpdateButtonMonitor(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
 	pCmdUI->SetCheck(!bPause);
+}
+
+void CMainFrame::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	KillTimer(1);
+	{
+		//创建一堆 doc view
+		AfxGetApp()->OpenDocumentFile(_T("unKnownGroup@20140409"));
+
+		std::map<int,stGroupInfo*>::iterator it = m_ChildProcessMan.m_mapGroupInfo.begin();
+		for(;it!=m_ChildProcessMan.m_mapGroupInfo.end();++it)
+		{
+			CString xx;
+			stGroupInfo *pInfo = it->second;
+			xx.Format(_T("%s@%d"),pInfo->strGroupName,pInfo->nGroupID);
+			AfxGetApp()->OpenDocumentFile(xx);
+		}
+	}
+
+	m_wndFileView.FillView(&m_ChildProcessMan);
+	
+	
+	m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);
+		
+	CMDIFrameWndEx::OnTimer(nIDEvent);
+}
+
+CMDIChildWnd * CMainFrame::GetNextMDIChildWnd()
+{
+	if(!m_pWndCurrentChild){
+		m_pWndCurrentChild = m_wndMDIClient.GetWindow(GW_CHILD);
+	}else{
+		m_pWndCurrentChild = (CMDIChildWnd*)m_pWndCurrentChild->GetWindow(GW_HWNDNEXT);
+
+	}
+
+	if(!m_pWndCurrentChild)return NULL;
+	if(!m_pWndCurrentChild->GetWindow(GW_OWNER)){
+		if   (m_pWndCurrentChild->   
+			IsKindOf(RUNTIME_CLASS(CMDIChildWnd)))   
+		{   
+			//   CMDIChildWnd   or   a   derived   class.   
+			return   (CMDIChildWnd*)m_pWndCurrentChild;   
+		}   
+		else   
+		{   
+			//   Window   is   foreign   to   the   MFC   framework.   
+			//   Check   the   next   window   in   the   list   recursively.   
+			return   GetNextMDIChildWnd();   
+		}   
+	}else{
+		  return   GetNextMDIChildWnd();   
+	}
+}
+
+int CMainFrame::GetCountCMDIChildWnds()
+{
+	return 0;
+	int   count   =   0;   
+
+	CMDIChildWnd*   pChild   =   GetNextMDIChildWnd();   
+	while   (pChild)   
+	{   
+		count++;   
+		pChild   =   GetNextMDIChildWnd();   
+	}   
+	return   count;  
 }
