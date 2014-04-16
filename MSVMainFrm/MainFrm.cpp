@@ -515,21 +515,38 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	KillTimer(1);
+	
 	{
 		//创建一堆 doc view
 		//AfxGetApp()->OpenDocumentFile(_T("unKnownGroup@20140409"));
-
+		//由于如果文件不存在 那么OpenDocumentFile 会奔溃
+		//所以打开temp中的一个文件
+		TCHAR tempPath[MAX_PATH];
+		GetTempPath(MAX_PATH,tempPath);
 		std::map<int,stGroupInfo*>::iterator it = m_ChildProcessMan.m_mapGroupInfo.begin();
+		CString strLastName;
 		for(;it!=m_ChildProcessMan.m_mapGroupInfo.end();++it)
 		{
 			CString xx;
 			stGroupInfo *pInfo = it->second;
 			xx.Format(_T("%s@%d"),pInfo->strGroupName,pInfo->nGroupID);
+			xx.Format(_T("%s\\%s@%d"),tempPath,pInfo->strGroupName,pInfo->nGroupID);
+			if(strLastName.IsEmpty())
+			{
+				FILE *pFile = _tfopen(xx,_T("w"));
+				if(pFile)
+				{
+					fclose(pFile);
+				}
+			}else{
+				_trename(strLastName,xx);
+			}
+			strLastName = xx;
 			AfxGetApp()->OpenDocumentFile(xx);
 		}
-	}
-
-	
+		if(!strLastName.IsEmpty())
+			_tremove(strLastName);
+	}	
 	
 	m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);
 		
