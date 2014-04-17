@@ -135,10 +135,10 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	}
 
 	m_wndFileView.EnableDocking(CBRS_ALIGN_ANY);
-	m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
+	//m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFileView);
-	CDockablePane* pTabbedBar = NULL;
-	m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
+	//CDockablePane* pTabbedBar = NULL;
+	//m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 
@@ -407,52 +407,34 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 	return TRUE;
 }
 
-CWnd *_getActiveView(CMainFrame*pThis)
-{
-
-	CFrameWnd *pFrameWnd=pThis;
-	CView *pView =NULL;
-#ifdef use_mdi_Framewnd
-	//mdi 此时的active frame 还是 自己，so activeview 为null
-	CMDIChildWnd *pChild = (CMDIChildWnd*)pThis->GetActiveFrame();
-	pView=pChild->GetActiveView();
-	pFrameWnd = pThis->GetActiveFrame();
-#endif
-	CWnd *pWnd = pFrameWnd->GetActiveView();
-	return (pWnd==NULL)?pFrameWnd:pWnd;
-}
 void CMainFrame::ActiveWindow(DWORD dwID)
 {
 	AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwID);
 	pData->hFrameWnd->ActivateFrame(SW_RESTORE);
 }
+void CMainFrame::AddBuildinfo(LPCTSTR lpStrInfo)
+{
+	m_wndOutput.AddBuildinfo(lpStrInfo);
+
+}
 BOOL  CMainFrame::StartWork( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
-	CString strLog;
-	strLog.Format(_T("StartWork id=%d----%d"),dwItmeData,GetCountCMDIChildWnds());
-	m_wndOutput.AddBuildinfo(strLog);
-	{
-		//根据id 获取对应的view
-
-	}
 	BOOL bRet =  m_ChildProcessMan.StartWork(dwItmeData,NULL,strTitle,bAlwaysCreateProcess);
+	AttachDlgInfoData*pData =NULL;
 	if(bRet)
 	{
-		AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwItmeData);
-		m_wndFileView.SetItemTitle(pData->pTreePosItem,strTitle);	
-		//修改frameWnd 的大小
-	//	pData->hFrameWnd->ActivateFrame(SW_MINIMIZE);
-//		CMSVMainFrmView*pView = (CMSVMainFrmView*)pData->hParentWnd;
-//		pView->ResizeParentToFit();
-		pData->hParentWnd->SendMessage(WM_USER+120,0,0);
+		pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwItmeData);
+		m_wndFileView.SetItemTitle(pData->pTreePosItem,strTitle);
 	}
+
+	CString strLog;
+	strLog.Format(_T("StartWork ret=%d id=%d--title[%s] path[%s]"),bRet,dwItmeData,strTitle,pData?pData->strExePath:_T("StartFailed"));
+	AddBuildinfo(strLog);
+
 	return bRet;
 }
 LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 {
-	CString xx;
-	xx.Format(_T("ViewCom--%x--%d"),wParam,lParam);
-	m_wndOutput.AddBuildinfo(xx);
 	CWnd *pWnd = (CWnd*)wParam;
 	CFrameWnd *pFrameWnd =(CFrameWnd*)wParam;
 	
@@ -478,6 +460,11 @@ LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 LRESULT CMainFrame::onMsgAttachWnd( WPARAM wParam,LPARAM lParam )
 {
 	DWORD dId = (DWORD)wParam;
+	if(dId==0x9898){
+
+		AddBuildinfo((LPCTSTR)lParam);
+		return 1;
+	}
 	CString strTitle;
 	StartWork(dId,strTitle,TRUE);
 	return 1;
@@ -489,7 +476,7 @@ void CMainFrame::OnButtonStop()
 	// TODO: 在此添加命令处理程序代码
 	m_ProcessMonitor.PauseMonitor();
 	bPause=TRUE;
-	m_wndOutput.AddBuildinfo(_T("暂停监控"));
+	AddBuildinfo(_T("暂停监控"));
 }
 void CMainFrame::OnUpdateButtonStop(CCmdUI *pCmdUI)
 {
@@ -502,7 +489,7 @@ void CMainFrame::OnButtonMonitor()
 	// TODO: 在此添加命令处理程序代码
 	m_ProcessMonitor.ResumeMonitor();
 	bPause=FALSE;
-	m_wndOutput.AddBuildinfo(_T("恢复监控"));
+	AddBuildinfo(_T("恢复监控"));
 }
 
 void CMainFrame::OnUpdateButtonMonitor(CCmdUI *pCmdUI)
@@ -518,7 +505,6 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	
 	{
 		//创建一堆 doc view
-		//AfxGetApp()->OpenDocumentFile(_T("unKnownGroup@20140409"));
 		//由于如果文件不存在 那么OpenDocumentFile 会奔溃
 		//所以打开temp中的一个文件
 		TCHAR tempPath[MAX_PATH];

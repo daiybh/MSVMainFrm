@@ -78,6 +78,7 @@ public:
 	CMDIChildWnd * GetNextMDIChildWnd();
 	int			GetCountCMDIChildWnds();
 	void ActiveWindow(DWORD dwID);
+	void AddBuildinfo(LPCTSTR lpStrInfo);
 	CWnd*   m_pWndCurrentChild; 
 	CWnd	m_wndMDIClient;
 };
