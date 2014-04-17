@@ -94,7 +94,7 @@ public:
 		::SetWindowText((hDlgWnd==NULL)?hParentWnd:hDlgWnd,strTitle);
 		cWnd->ModifyStyle(WS_CAPTION,0);
 		//隐藏边框
-		cWnd->ModifyStyle(WS_THICKFRAME,1);
+	//	cWnd->ModifyStyle(WS_THICKFRAME,1);
 		//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
 		//显示对话框
 		::SetParent(arg.hWnd,hParentWnd);
@@ -133,21 +133,21 @@ public:
 		else
 		{
 //			SetWindowPos(hParentWnd,NULL, m_exeRect.left+5, m_exeRect.top+5, m_exeRect.Width()+1-5, m_exeRect.Height()+10-5, 0);
-			SetWindowPos(hParentWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+10, m_exeRect.Height()+15, 0);
+			SetWindowPos(hParentWnd,NULL, 0,0, m_exeRect.Width()+10, m_exeRect.Height()+15, 0);
 		}
 		if(hDlgWnd&& hDlgWnd!=hParentWnd){
 			SetWindowPos(hDlgWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+10, m_exeRect.Height()+10, 0);
 		}
-// 		CRect rect2;
-// 		GetClientRect(hParentWnd,rect2);
+		CRect rect2;
+		GetClientRect(hParentWnd,rect2);
 
-// 		CString ss;
-// 		ss.Format(_T("bRectNull=%d DlgWndRect[%d,%d,%d,%d][%d,%d,%d,%d] exeRect[%d,%d,%d,%d]"),
-// 			bRectNull,
-// 			rect.left,rect.top,rect.Width(),rect.Height(),
-// 			rect2.left,rect2.top,rect2.Width(),rect2.Height(),
-// 			m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
-// 		AfxGetMainWnd()->SendMessage( WM_USER+102,0x9898,(LPARAM)(LPCTSTR)ss);
+		CString ss;
+		ss.Format(_T("bRectNull=%d DlgWndRect[%d,%d,%d,%d][%d,%d,%d,%d] exeRect[%d,%d,%d,%d]"),
+			bRectNull,
+			rect.left,rect.top,rect.Width(),rect.Height(),
+			rect2.left,rect2.top,rect2.Width(),rect2.Height(),
+			m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
+		AfxGetMainWnd()->SendMessage( WM_USER+102,0x9898,(LPARAM)(LPCTSTR)ss);
 
 
 	}
@@ -162,7 +162,6 @@ class CMSVDlg : public CDialog,public CCreateProcessWnd
 {
 	DECLARE_DYNAMIC(CMSVDlg)
 public:
-	BOOL StartWork(LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess=FALSE);
 protected:
 public:
 	CMSVDlg(CWnd* pParent = NULL);   // 标准构造函数
@@ -181,4 +180,6 @@ private:
 public:
 	afx_msg void OnClose();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnMove(int x, int y);
+	afx_msg void OnPaint();
 };

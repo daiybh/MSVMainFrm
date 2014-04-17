@@ -30,23 +30,10 @@ void CMSVDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CMSVDlg, CDialog)
 	ON_WM_CLOSE()
 	ON_WM_SIZE()
+	ON_WM_MOVE()
+	ON_WM_PAINT()
 END_MESSAGE_MAP()
 
-
-
-BOOL CMSVDlg::StartWork( LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess/*=FALSE*/ )
-{
-	m_strExePath = lpStrExePath;
-	HWND hWnd = m_hWnd;
-	// 	CWnd*pMask = GetDlgItem(IDC_STATIC_MASK);
-	// 	if(pMask)
-	// 		hWnd=pMask->m_hWnd;	
-	BOOL bRet =  AttachExeToWnd(m_strExePath,hWnd,m_hWnd,bAlwaysCreateProcess);	
-	if(bRet){
-
-	}
-	return bRet;
-}
 // CMSVDlg 消息处理程序
 void CMSVDlg::OnClose()
 {
@@ -63,3 +50,28 @@ void CMSVDlg::OnSize(UINT nType, int cx, int cy)
 }
 
 
+
+
+void CMSVDlg::OnMove(int x, int y)
+{
+	__super::OnMove(x, y);
+
+	// TODO: 在此处添加消息处理程序代码
+//	SendMessage(WM_ERASEBKGND,0,0);
+//	SendMessage(WM_PAINT,0,0);
+//	Invalidate(TRUE);
+
+//	::SendMessage(m_hExeWnd,WM_ERASEBKGND,0,0);
+//	::SendMessage(m_hExeWnd,WM_PAINT,0,0);
+//	::RedrawWindow(m_hExeWnd);
+//	::InvalidateRect();
+//	UpdateWindow();
+}
+
+
+void CMSVDlg::OnPaint()
+{
+	CPaintDC dc(this); // device context for painting
+		// TODO: 在此处添加消息处理程序代码
+	// 不为绘图消息调用 __super::OnPaint()
+}
