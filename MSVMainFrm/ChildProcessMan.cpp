@@ -172,3 +172,13 @@ void CChildAttachDialogMan::AddToArr( AttachDlgInfoData*pData )
 	pData->nCurID = m_arrAttachDlgInfoData.GetSize();
 	m_arrAttachDlgInfoData.Add(pData);
 }
+
+BOOL CChildAttachDialogMan::ActiveWindow( DWORD dwID )
+{
+	AttachDlgInfoData*pData = m_arrAttachDlgInfoData.GetAt(dwID);
+	if(!pData)return FALSE;
+	pData->hFrameWnd->ActivateFrame(SW_SHOWNORMAL);
+	pData->pAttachDlg->ShowWindow(SW_SHOWMINIMIZED);
+	pData->pAttachDlg->ShowWindow(SW_SHOWNORMAL);
+	return TRUE;
+}

@@ -33,6 +33,7 @@ public:
 	~CChildAttachDialogMan(void);
 	CChildAttachDialogMan(void);
 	BOOL StartWork(DWORD dwID,CWnd*pParentWnd,CString &strTitle,BOOL bAlwaysCreateProcess=FALSE);
+	BOOL ActiveWindow(DWORD dwID);
 private:
 private:
 	//CArray<CMSVDlg*,CMSVDlg*> m_arrAttachDlg;

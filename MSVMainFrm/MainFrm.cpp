@@ -409,8 +409,7 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 void CMainFrame::ActiveWindow(DWORD dwID)
 {
-	AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwID);
-	pData->hFrameWnd->ActivateFrame(SW_RESTORE);
+	m_ChildProcessMan.ActiveWindow(dwID);
 }
 void CMainFrame::AddBuildinfo(LPCTSTR lpStrInfo)
 {
