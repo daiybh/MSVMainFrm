@@ -124,15 +124,32 @@ public:
 		CWnd *cWnd=CWnd::FromHandle(m_hExeWnd);
 		CRect m_exeRect;
 		cWnd->GetClientRect(m_exeRect);
+		BOOL bRectNull=FALSE;
 		if(m_exeRect.IsRectNull())
+		{
+			bRectNull = TRUE;
 			cWnd->SetWindowPos(NULL, rect.left, rect.top, rect.Width(), rect.Height(), 0);
+		}
 		else
 		{
-			SetWindowPos(hParentWnd,NULL, m_exeRect.left+5, m_exeRect.top+5, m_exeRect.Width()+1-5, m_exeRect.Height()+10-5, 0);
+//			SetWindowPos(hParentWnd,NULL, m_exeRect.left+5, m_exeRect.top+5, m_exeRect.Width()+1-5, m_exeRect.Height()+10-5, 0);
+			SetWindowPos(hParentWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+10, m_exeRect.Height()+15, 0);
 		}
 		if(hDlgWnd&& hDlgWnd!=hParentWnd){
-			SetWindowPos(hDlgWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+1, m_exeRect.Height()+10, 0);
+			SetWindowPos(hDlgWnd,NULL, m_exeRect.left, m_exeRect.top, m_exeRect.Width()+10, m_exeRect.Height()+10, 0);
 		}
+// 		CRect rect2;
+// 		GetClientRect(hParentWnd,rect2);
+
+// 		CString ss;
+// 		ss.Format(_T("bRectNull=%d DlgWndRect[%d,%d,%d,%d][%d,%d,%d,%d] exeRect[%d,%d,%d,%d]"),
+// 			bRectNull,
+// 			rect.left,rect.top,rect.Width(),rect.Height(),
+// 			rect2.left,rect2.top,rect2.Width(),rect2.Height(),
+// 			m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
+// 		AfxGetMainWnd()->SendMessage( WM_USER+102,0x9898,(LPARAM)(LPCTSTR)ss);
+
+
 	}
 	HWND    m_hExeWnd;
 	DWORD m_dwProcessId;

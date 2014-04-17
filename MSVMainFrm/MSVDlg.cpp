@@ -13,7 +13,7 @@ IMPLEMENT_DYNAMIC(CMSVDlg, CDialog)
 CMSVDlg::CMSVDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CMSVDlg::IDD, pParent)
 {
-    m_strExePath = _T("");
+	m_strExePath = _T("");
 	m_bIsLoad    = FALSE;
 }
 
@@ -38,9 +38,9 @@ BOOL CMSVDlg::StartWork( LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess/*=FALSE*
 {
 	m_strExePath = lpStrExePath;
 	HWND hWnd = m_hWnd;
-// 	CWnd*pMask = GetDlgItem(IDC_STATIC_MASK);
-// 	if(pMask)
-// 		hWnd=pMask->m_hWnd;	
+	// 	CWnd*pMask = GetDlgItem(IDC_STATIC_MASK);
+	// 	if(pMask)
+	// 		hWnd=pMask->m_hWnd;	
 	BOOL bRet =  AttachExeToWnd(m_strExePath,hWnd,m_hWnd,bAlwaysCreateProcess);	
 	if(bRet){
 
@@ -50,14 +50,16 @@ BOOL CMSVDlg::StartWork( LPCTSTR lpStrExePath,BOOL bAlwaysCreateProcess/*=FALSE*
 // CMSVDlg 消息处理程序
 void CMSVDlg::OnClose()
 {
-	 this->ShowWindow(SW_HIDE);
+	this->ShowWindow(SW_HIDE);
 	//CDialog::OnClose();
 }
 
 void CMSVDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialog::OnSize(nType, cx, cy);
-    
-	AdjustLayout();
+
+	//	AdjustLayout();
 	// TODO: 在此处添加消息处理程序代码
 }
+
+
