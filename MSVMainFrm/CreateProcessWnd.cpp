@@ -133,8 +133,8 @@ void CCreateProcessWnd::AdjustLayout( HWND hParentWnd )
 	else
 	{
 		//			SetWindowPos(hParentWnd,NULL, m_exeRect.left+5, m_exeRect.top+5, m_exeRect.Width()+1-5, m_exeRect.Height()+10-5, 0);
-		SetWindowPos(hParentWnd,NULL, 0,0, m_exeRect.Width()+10, m_exeRect.Height()+15, 0);
-		SetWindowPos(m_hExeWnd,NULL, 0,0, m_exeRect.Width(), m_exeRect.Height(), 0);
+		SetWindowPos(hParentWnd,HWND_BOTTOM, 0,0, m_exeRect.Width()+10, m_exeRect.Height()+15, 0);
+		SetWindowPos(m_hExeWnd,HWND_BOTTOM, 0,0, m_exeRect.Width(), m_exeRect.Height(), SWP_NOACTIVATE);
 
 	}
 	CRect rect2;

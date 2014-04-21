@@ -84,7 +84,10 @@ void CMSVDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 	AfxGetMainWnd()->SendMessage(WM_USER+102,0x9898,(LPARAM)(LPCTSTR)_T("CMSVDlg::OnLButtonDblClk"));
 	AdjustLayout();
 	CRect attachWndRect,dlgRect;
-	GetDlgItem(IDC_STATIC_ATTACHWND)->GetClientRect(attachWndRect);
+
+	CWnd* pAttachWnd = GetDlgItem(IDC_STATIC_ATTACHWND);
+	if(!pAttachWnd){pAttachWnd = this;}
+	pAttachWnd->GetClientRect(attachWndRect);
 	SetWindowPos(NULL, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+15, 0);
 	//::SetWindowPos(GetDlgItem(IDC_STATIC_ATTACHWND2)->m_hWnd,HWND_TOPMOST, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+15, 0);
 	__super::OnLButtonDblClk(nFlags, point);
@@ -92,12 +95,14 @@ void CMSVDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
 
 BOOL CMSVDlg::AttachExeToWnd( LPCTSTR lpExePath,HWND hParentWnd,BOOL bAlwaysCreateProcess )
 {
-	HWND hAttachWnd = GetDlgItem(IDC_STATIC_ATTACHWND)->m_hWnd;
+	CWnd* pAttachWnd = GetDlgItem(IDC_STATIC_ATTACHWND);
+	if(!pAttachWnd){pAttachWnd = this;}
+	HWND hAttachWnd = pAttachWnd->m_hWnd;
 	BOOL bRet =  __super::AttachExeToWnd(lpExePath,hAttachWnd,bAlwaysCreateProcess);
 	CRect attachWndRect,dlgRect;
 	::GetClientRect(hAttachWnd,attachWndRect);
-	SetWindowPos(NULL, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+15, 0);
-	//::SetWindowPos(GetDlgItem(IDC_STATIC_ATTACHWND2)->m_hWnd,HWND_TOP, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+15, 0);
+	SetWindowPos(NULL, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+35, 0);
+	//::SetWindowPos(GetDlgItem(IDC_STATIC_ATTACHWND2)->m_hWnd,HWND_TOP, 5,19, attachWndRect.Width()+7, attachWndRect.Height()+30, SWP_DRAWFRAME);
 	return bRet;
 }
 
