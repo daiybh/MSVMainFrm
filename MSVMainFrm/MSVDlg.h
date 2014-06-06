@@ -13,6 +13,8 @@ public:
 	virtual ~CMSVDlg();
 
 	virtual BOOL AttachExeToWnd(LPCTSTR lpExePath,HWND hAttachWnd,BOOL bAlwaysCreateProcess);
+	void CloseDlg(BOOL bSilent=FALSE);
+	void ActiveWindow();
 // 对话框数据
 	enum { IDD = IDD_MSVDLG };
     
@@ -21,12 +23,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 private:
-	CString m_strExePath;
 	CRect   m_exeRect;
 public:
 	afx_msg void OnClose();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMove(int x, int y);
-	afx_msg void OnPaint();
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };

@@ -10,11 +10,14 @@ public:
 	void _MonitorThread();
 	void PauseMonitor();
 	void ResumeMonitor();
-	void StartWork(HWND hMsgWnd,const CArray<AttachDlgInfoData*,AttachDlgInfoData*> *pArr);	
+	void StartWork(HWND hMsgWnd,const CArray<AttachDlgInfoData*,AttachDlgInfoData*> *pArr);
+	void StopWork();
+	BOOL GetMonitorStatus(){return m_bPauseMonitor;}
 private:
 	BOOL _IsProcessExist(CString strProPath,DWORD dwProcessID);
 	const CArray<AttachDlgInfoData*,AttachDlgInfoData*> *m_pArrAttachData;
 	HANDLE m_hMonitorThread;
 	HWND	m_hMsgWnd;
 	BOOL  m_bPauseMonitor;
+	HANDLE m_hExitEvent;
 };

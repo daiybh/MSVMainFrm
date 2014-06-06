@@ -9,6 +9,7 @@ public:
 	{
 		AdjustLayout(m_hParentWnd);
 	}
+	CString GetTitle();
 	//////////////////////////////////////////////////////////////////////////
 	class CCreateProcess{
 	public:
@@ -25,13 +26,20 @@ private:
 	void AdjustLayout(HWND hParentWnd);
 public:
 	HWND    m_hExeWnd;
+	CString m_strExePath;
 	DWORD m_dwProcessId;
 	HWND	m_hParentWnd;
 	HWND    m_hMaskWnd;
 	BOOL    m_bIsLoad;
-public:
-	CString strTitle;
+	BOOL	m_bAttachWnd_created;
+	DWORD	m_dwTop;
+	DWORD	m_dwLeft;
+	DWORD	m_dwWidth;
+	DWORD	m_dwHeight;
+private:
+	CString strExeOrgTitle;
 private:
 	CCreateProcess m_CreateProcess;
+
 };
 

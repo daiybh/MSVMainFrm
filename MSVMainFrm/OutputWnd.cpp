@@ -61,6 +61,7 @@ int COutputWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	// 将列表窗口附加到选项卡:
 	bNameValid = strTabName.LoadString(IDS_BUILD_TAB);
+	strTabName=_T("信息");
 	ASSERT(bNameValid);
 	m_wndTabs.AddTab(&m_wndOutputBuild, strTabName, (UINT)0);
 
@@ -97,6 +98,19 @@ void COutputWnd::AdjustHorzScroll(CListBox& wndListBox)
 void COutputWnd::AddBuildinfo(LPCTSTR lpInfo)
 {
 	m_wndOutputBuild.AddString(lpInfo);
+}
+
+void COutputWnd::OnPressCloseButton()
+{
+	__super::OnPressCloseButton();
+}
+
+void COutputWnd::OnSlide( BOOL bSlideOut )
+{
+	CString ss;
+	ss = _T("onSlide")+bSlideOut?_T("_t"):_T("_F");
+	AddBuildinfo(ss);
+	__super::OnSlide(bSlideOut);
 }
 
 

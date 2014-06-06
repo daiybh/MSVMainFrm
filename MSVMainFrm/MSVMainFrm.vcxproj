@@ -18,6 +18,10 @@
     <ProjectGuid>{BD605947-9B24-46DE-85CD-A3F4F1E9887A}</ProjectGuid>
     <RootNamespace>MSVMainFrm</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <SccProjectName>SAK</SccProjectName>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_MDI|Win32'" Label="Configuration">

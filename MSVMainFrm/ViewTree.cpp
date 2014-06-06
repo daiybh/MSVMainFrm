@@ -20,7 +20,7 @@ CViewTree::~CViewTree()
 }
 
 BEGIN_MESSAGE_MAP(CViewTree, CTreeCtrl)
-	ON_NOTIFY_REFLECT(NM_CLICK, &CViewTree::OnNMClick)
+	ON_NOTIFY_REFLECT(NM_DBLCLK, &CViewTree::OnNMClick)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -62,18 +62,18 @@ void CViewTree::OnNMClick(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 	if( NULL != hSelect )
 	{
-
 		HTREEITEM hChildItem = GetChildItem(hSelect);
-		if(hChildItem==NULL)
+		if(hChildItem!=NULL)
 		{
-			//CString str = pTreeCtrl->GetItemText(hSelect);
+			hSelect = hChildItem;
 
+		}
+		//if(hChildItem==NULL)
+		{
 			DWORD dwData = pTreeCtrl->GetItemData(hSelect);  
-
 			if(dwData!=0)
 			{//*
 				((CMainFrame*)AfxGetMainWnd())->ActiveWindow(dwData-1);
-
 			}
 		}
 	}

@@ -16,6 +16,7 @@ void CProcessMonitor::StartWork(HWND hMsgWnd,const CArray<AttachDlgInfoData*,Att
 {
 	m_pArrAttachData = pArr;
 	m_hMsgWnd = hMsgWnd;
+	m_hExitEvent=CreateEvent(NULL,NULL,FALSE,NULL);
 	m_hMonitorThread = CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)_MonitorThread_CB, this,NULL,0);	
 	m_bPauseMonitor=FALSE;
 }
@@ -84,7 +85,6 @@ BOOL CProcessMonitor::_IsProcessExist(CString strProPath,DWORD dwProcessID)
 void CProcessMonitor::_MonitorThread()
 {
 	int nPocessNum = m_pArrAttachData->GetSize();
-	HANDLE m_hExitEvent=CreateEvent(NULL,NULL,FALSE,NULL);
 	DWORD m_iMonitorInterval=1000;
 	CString strInfo;
 	while (1)
@@ -92,12 +92,13 @@ void CProcessMonitor::_MonitorThread()
 		for (int i=0;i<nPocessNum;i++)
 		{
 			AttachDlgInfoData *pData = m_pArrAttachData->GetAt(i);
-			if (!_IsProcessExist(pData->strExePath,pData->nProcessID))
+			if (!_IsProcessExist(pData->strExePath,pData->GetProcessID()))
 			{	
 				//通知出去该节点需要创建进程
 				CString notifyStr;
 				notifyStr.Format(_T("Process:%s--"),pData->strExePath);
 				OutputDebugString(notifyStr);
+				//TODO: z这里应该直接调用外部接口，不应该通过消息
 				::SendMessage(m_hMsgWnd,WM_USER+102,i,pData->nCurID);
 			}
 		}
@@ -122,5 +123,18 @@ void CProcessMonitor::ResumeMonitor()
 		ResumeThread(m_hMonitorThread);
 
 	m_bPauseMonitor=FALSE;
+}
+
+void CProcessMonitor::StopWork()
+{
+	SetEvent(m_hExitEvent);
+	DWORD dwRet =WaitForSingleObject(m_hMonitorThread,3000);
+	if(dwRet==WAIT_TIMEOUT)
+	{
+		TerminateThread(m_hMonitorThread,0);
+	}
+	CloseHandle( m_hMonitorThread);
+	m_hMonitorThread = NULL; 
+	CloseHandle(m_hExitEvent);
 }
 

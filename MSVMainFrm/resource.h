@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ 生成的包含文件。
-// 供 MSVMainFrm.rc 使用
+// Microsoft Visual C++ generated include file.
+// Used by MSVMainFrm.rc
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100
@@ -85,12 +85,8 @@
 #define IDC_STATIC_ATTACHWND2           1005
 #define IDC_EDIT1                       1006
 #define ID_Menu                         32771
-#define ID_32772                        32772
-#define ID_BUTTON_STOP                  32774
-#define ID_32775                        32775
-#define ID_32776                        32776
-#define ID_BUTTON_MONITOR               32777
-#define ID_32779                        32779
+#define ID_BUTTON_STOP                  1007
+#define ID_BUTTON_MONITOR               1008
 
 // Next default values for new objects
 // 

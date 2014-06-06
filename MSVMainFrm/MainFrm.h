@@ -27,7 +27,7 @@ public:
 
 // ²Ù×÷
 public:
-	BOOL StartWork(DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess=FALSE);	
+	BOOL CreateChildProcess(DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess=FALSE);	
 
 
 
@@ -35,7 +35,9 @@ public:
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 	virtual BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle = WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, CWnd* pParentWnd = NULL, CCreateContext* pContext = NULL);
-
+	static BOOL CALLBACK MouseEvent_CallBack(WPARAM wParam,LPARAM lParam, LPVOID pUserData);
+	BOOL MouseEventCB(WPARAM wParam,LPARAM lParam);
+	BOOL StartHookMouse();
 // ÊµÏÖ
 public:
 	virtual ~CMainFrame();
@@ -81,6 +83,7 @@ public:
 	void AddBuildinfo(LPCTSTR lpStrInfo);
 	CWnd*   m_pWndCurrentChild; 
 	CWnd	m_wndMDIClient;
+	afx_msg void OnClose();
 };
 
 

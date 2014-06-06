@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CMDIFrameWndEx)
 	ON_COMMAND(ID_BUTTON_MONITOR, &CMainFrame::OnButtonMonitor)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_MONITOR, &CMainFrame::OnUpdateButtonMonitor)
 	ON_WM_TIMER()
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -49,7 +50,7 @@ static UINT indicators[] =
 };
 
 // CMainFrame 构造/析构
-
+BOOL g_bMonitorRunning=FALSE;
 CMainFrame::CMainFrame()
 {
 	// TODO: 在此添加成员初始化代码
@@ -138,7 +139,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	//m_wndClassView.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndFileView);
 	//CDockablePane* pTabbedBar = NULL;
-	//m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, TRUE, &pTabbedBar);
+	//m_wndClassView.AttachToTabWnd(&m_wndFileView, DM_SHOW, FALSE, &pTabbedBar);
 	m_wndOutput.EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndOutput);
 
@@ -152,28 +153,21 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 启用快速(按住 Alt 拖动)工具栏自定义
 	CMFCToolBar::EnableQuickCustomization();
 
-	if (CMFCToolBar::GetUserImages() == NULL)
-	{
-		// 加载用户定义的工具栏图像
-		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
-		{
-			m_UserImages.SetImageSize(CSize(16, 16), FALSE);
-			CMFCToolBar::SetUserImages(&m_UserImages);
-		}
-	}
+// 	if (CMFCToolBar::GetUserImages() == NULL)
+// 	{
+// 		// 加载用户定义的工具栏图像
+// 		if (m_UserImages.Load(_T(".\\UserImages.bmp")))
+// 		{
+// 			m_UserImages.SetImageSize(CSize(16, 16), FALSE);
+// 			CMFCToolBar::SetUserImages(&m_UserImages);
+// 		}
+// 	}
 
 	// 启用菜单个性化(最近使用的命令)
 	// TODO: 定义您自己的基本命令，确保每个下拉菜单至少有一个基本命令。
 	CList<UINT, UINT> lstBasicCommands;
 
-	lstBasicCommands.AddTail(ID_FILE_NEW);
-	lstBasicCommands.AddTail(ID_FILE_OPEN);
-	lstBasicCommands.AddTail(ID_FILE_SAVE);
-	lstBasicCommands.AddTail(ID_FILE_PRINT);
 	lstBasicCommands.AddTail(ID_APP_EXIT);
-	lstBasicCommands.AddTail(ID_EDIT_CUT);
-	lstBasicCommands.AddTail(ID_EDIT_PASTE);
-	lstBasicCommands.AddTail(ID_EDIT_UNDO);
 	lstBasicCommands.AddTail(ID_APP_ABOUT);
 	lstBasicCommands.AddTail(ID_VIEW_STATUS_BAR);
 	lstBasicCommands.AddTail(ID_VIEW_TOOLBAR);
@@ -187,7 +181,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYTYPE);
 	lstBasicCommands.AddTail(ID_SORTING_SORTBYACCESS);
 	lstBasicCommands.AddTail(ID_SORTING_GROUPBYTYPE);
-
+	
+	lstBasicCommands.AddTail(ID_BUTTON_STOP);
+	lstBasicCommands.AddTail(ID_BUTTON_MONITOR);
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	CMDIFrameWndEx::EnableLoadDockState(TRUE) ;
@@ -411,26 +407,75 @@ void CMainFrame::ActiveWindow(DWORD dwID)
 {
 	m_ChildProcessMan.ActiveWindow(dwID);
 }
+
+
+#define  MODULE_LEN		(64)
+
+// 定义函数入口全局变量
+static VOID (*g_pfn)(WCHAR* szModuleName,LONG  lLogLevel, const WCHAR *fmt);
+static BOOL (*g_pfnNMInit)();
+HINSTANCE g_hinstPlugLib = NULL;
+void LoadNmLoger()
+{
+	//初始化代码, 
+	g_hinstPlugLib = LoadLibrary(_T("sonaps.logger.client.dll"));
+	if (g_hinstPlugLib == NULL)
+	{
+	//	AfxMessageBox(_T("LoadLibrary(sonaps.logger.client.dll) Failed!"));
+		return;
+	}
+	
+	const char szFn[] = "NMTrace0";
+	const char szNMInit[] = "NMInit";
+	*(FARPROC*)&g_pfn = GetProcAddress(g_hinstPlugLib, szFn);
+	*(FARPROC*)&g_pfnNMInit = GetProcAddress(g_hinstPlugLib, szNMInit);
+
+	if (g_pfnNMInit != NULL)
+	{
+		g_pfnNMInit();
+	}
+}
+
+void WriteLog(WCHAR* szModuleName,LONG  lLogLevel, LPCTSTR strLog)
+//void WriteLog(WCHAR* szModuleName,LONG  lLogLevel,const WCHAR *fmt, ...)
+{
+	if(g_pfn==NULL)
+	{
+		LoadNmLoger();
+	}
+	if (g_pfn != NULL)
+	{	
+		try
+		{
+			g_pfn(szModuleName, lLogLevel, strLog);
+			//strLog.ReleaseBuffer();
+		}
+		catch(...)		//当字符串里包含“%S”这样的转义字符时有可能会异常
+		{
+
+		}
+	}
+}
+void WriteLog(LPCTSTR strLog)
+{
+	WriteLog(_T("ProcessManager"),2,strLog);
+//	g_pfn(_T("ProcessManager"), 2, strLog);
+}
 void CMainFrame::AddBuildinfo(LPCTSTR lpStrInfo)
 {
 	m_wndOutput.AddBuildinfo(lpStrInfo);
+	WriteLog(lpStrInfo);
+
 
 }
-BOOL  CMainFrame::StartWork( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess/*=FALSE*/ )
+BOOL  CMainFrame::CreateChildProcess( DWORD dwItmeData,CString &strTitle,BOOL bAlwaysCreateProcess/*=FALSE*/ )
 {
-	BOOL bRet =  m_ChildProcessMan.StartWork(dwItmeData,NULL,strTitle,bAlwaysCreateProcess);
-	AttachDlgInfoData*pData =NULL;
-	if(bRet)
+	HTREEITEM pTreePosItem =  m_ChildProcessMan.CreateChildProcess(dwItmeData,NULL,strTitle,bAlwaysCreateProcess);
+	if(pTreePosItem)
 	{
-		pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(dwItmeData);
-		m_wndFileView.SetItemTitle(pData->pTreePosItem,strTitle);
+		m_wndFileView.SetItemTitle(pTreePosItem,strTitle);
 	}
-
-	CString strLog;
-	strLog.Format(_T("StartWork ret=%d id=%d--title[%s] path[%s]"),bRet,dwItmeData,strTitle,pData?pData->strExePath:_T("StartFailed"));
-	AddBuildinfo(strLog);
-
-	return bRet;
+	return (pTreePosItem!=NULL);
 }
 LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 {
@@ -438,21 +483,8 @@ LRESULT CMainFrame::onViewComplete( WPARAM wParam,LPARAM lParam )
 	CFrameWnd *pFrameWnd =(CFrameWnd*)wParam;
 	
 	int nGroupID = (int )lParam;
-	{
-		for (int i=0;i<m_ChildProcessMan.m_arrAttachDlgInfoData.GetCount();i++)
-		{
-			AttachDlgInfoData *pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(i);
-			if(pData->pstGroupInfo)//unknown docView				
-			{
-				if(pData->pstGroupInfo->nGroupID == nGroupID){
-					pData->hParentWnd = pFrameWnd->GetActiveView();
-					pData->hFrameWnd = pFrameWnd;
-				}
-			}else{
-				pData->hParentWnd =this;
-			}
-		}
-	}
+	m_ChildProcessMan.UpdateGroupFramewnd(nGroupID,pFrameWnd);
+	
 	return 1;
 }
 
@@ -463,46 +495,130 @@ LRESULT CMainFrame::onMsgAttachWnd( WPARAM wParam,LPARAM lParam )
 
 		AddBuildinfo((LPCTSTR)lParam);
 		return 1;
+	}else if(dId==0x9999){
+		AddBuildinfo(_T("onMsgAttachWnd 0x9999"));
+		{
+			//调整为组模式
+		}
+		return 1;
 	}
 	CString strTitle;
-	StartWork(dId,strTitle,TRUE);
+	CreateChildProcess(dId,strTitle,TRUE);
 	return 1;
 }
-
-BOOL bPause=FALSE;
+CString strStatusInfo[]={_T("Stop Monitor"),_T("Resume Monitor")};
 void CMainFrame::OnButtonStop()
 {
 	// TODO: 在此添加命令处理程序代码
 	m_ProcessMonitor.PauseMonitor();
-	bPause=TRUE;
-	AddBuildinfo(_T("暂停监控"));
+	SetTimer(2,1000,NULL);
+	g_bMonitorRunning =FALSE ;
+	CString strLog;
+	strLog.Format(_T("%s-%d"),strStatusInfo[0],m_ProcessMonitor.GetMonitorStatus());
+	AddBuildinfo(strLog);
 }
 void CMainFrame::OnUpdateButtonStop(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->SetCheck(bPause);
+	pCmdUI->SetCheck(!g_bMonitorRunning);
 }
 
 void CMainFrame::OnButtonMonitor()
 {
-	// TODO: 在此添加命令处理程序代码
+	// TODO: 在此添加命令处理程序代码	
+	g_bMonitorRunning =TRUE ;
 	m_ProcessMonitor.ResumeMonitor();
-	bPause=FALSE;
-	AddBuildinfo(_T("恢复监控"));
+	KillTimer(2);
+	CString strLog;
+	strLog.Format(_T("%s-%d"),strStatusInfo[1],m_ProcessMonitor.GetMonitorStatus());
+	AddBuildinfo(strLog);
 }
 
 void CMainFrame::OnUpdateButtonMonitor(CCmdUI *pCmdUI)
 {
 	// TODO: 在此添加命令更新用户界面处理程序代码
-	pCmdUI->SetCheck(!bPause);
+	pCmdUI->SetCheck(g_bMonitorRunning);
+}
+DWORD getProcessID(POINT pt)
+{
+	HWND hW = WindowFromPoint(pt);
+	DWORD processID,threadID;
+	threadID = GetWindowThreadProcessId(hW,&processID);
+	return processID;
+}
+BOOL IsSameWindow(DWORD dProcessID,POINT pt)
+{
+	return (dProcessID== getProcessID(pt));
+}
+BOOL CMainFrame::MouseEvent_CallBack(WPARAM wParam,LPARAM lParam, LPVOID pUserData)
+{
+	CMainFrame*pThis = (CMainFrame*)pUserData;
+	return pThis->MouseEventCB(wParam,lParam);
 }
 
+BOOL CMainFrame::MouseEventCB( WPARAM wParam,LPARAM lParam )
+{
+	//if(m_ProcessMonitor.GetMonitorStatus())return FALSE;
+	if(WM_LBUTTONDOWN==wParam || WM_RBUTTONDOWN==wParam)
+	{
+		//PMSLLHOOKSTRUCT pMouseSt =(PMSLLHOOKSTRUCT)lParam;
+		PMOUSEHOOKSTRUCT pMouseSt =(PMOUSEHOOKSTRUCT)lParam;
+		//检查鼠标是否落在自己的子进程
+		//TODO: 这里的遍历效率是个问题。
+		DWORD dwProcessID = getProcessID(pMouseSt->pt);
+		BOOL bRet=FALSE;
+		for(int i=0;i<m_ChildProcessMan.m_arrAttachDlgInfoData.GetCount();i++)
+		{
+			AttachDlgInfoData*pdata = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(i);
+			if(pdata->GetProcessID()==dwProcessID)
+			{
+				pdata->ActiveWindow();
+				return 1;
+			}
+		}
+	}
+	return FALSE;
+}
+
+typedef BOOL (CALLBACK *ENCODEDATA_CALLBACKFUNC)(WPARAM wparam,LPARAM lParam, LPVOID pUserData);
+typedef BOOL (CALLBACK *LPFUNC_STARTHOOKMOUSE)(ENCODEDATA_CALLBACKFUNC pFunc,LPVOID lpUserData);
+typedef void (CALLBACK *LPFUNC_STOPHOOKMOUSE)();
+LPFUNC_STARTHOOKMOUSE g_HookFunc_StartHook=NULL;
+LPFUNC_STOPHOOKMOUSE  g_HookFunc_StopHook=NULL;
+HHOOK hhkMouse = NULL;
+HINSTANCE g_hInstDll = NULL;
+
+BOOL CMainFrame::StartHookMouse()
+{
+	g_hInstDll=LoadLibrary(_T("WindowsHook.dll"));
+	if(g_hInstDll==NULL)
+	{
+	//	AfxMessageBox(_T("no MouseHook.dll"));
+		return FALSE;
+	}
+
+	g_HookFunc_StartHook=(LPFUNC_STARTHOOKMOUSE)::GetProcAddress(g_hInstDll,"StartHookMouse");
+	if(g_HookFunc_StartHook==NULL)
+	{
+	//	AfxMessageBox(_T("func StartHookMouse not found!"));
+		return FALSE;
+	}
+	//if (StartHook(hWnd,GetCurrentProcessId()))
+	if(!g_HookFunc_StartHook(MouseEvent_CallBack,this))
+	{
+	//	AfxMessageBox(_T("Hook Mouse faild"));
+	}
+	g_HookFunc_StopHook = (LPFUNC_STOPHOOKMOUSE)::GetProcAddress(g_hInstDll,"StopHookMouse");
+	return FALSE;
+}
 void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	KillTimer(1);
-	
+	if(nIDEvent==1)
 	{
+		KillTimer(1);
+		//鼠标钩子
+		StartHookMouse();
 		//创建一堆 doc view
 		//由于如果文件不存在 那么OpenDocumentFile 会奔溃
 		//所以打开temp中的一个文件
@@ -514,7 +630,6 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		{
 			CString xx;
 			stGroupInfo *pInfo = it->second;
-			xx.Format(_T("%s@%d"),pInfo->strGroupName,pInfo->nGroupID);
 			xx.Format(_T("%s\\%s@%d"),tempPath,pInfo->strGroupName,pInfo->nGroupID);
 			if(strLastName.IsEmpty())
 			{
@@ -531,10 +646,24 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 		}
 		if(!strLastName.IsEmpty())
 			_tremove(strLastName);
-	}	
-	
-	m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);
-		
+		m_ProcessMonitor.StartWork(this->m_hWnd,&m_ChildProcessMan.m_arrAttachDlgInfoData);
+		g_bMonitorRunning=TRUE;
+//		m_ProcessMonitor.StartWork(this,&m_ChildProcessMan.m_arrAttachDlgInfoData);
+	}
+	else if(nIDEvent==2)
+	{
+		//AddBuildinfo(m_ChildProcessMan.CheckWindow());
+		for(int i=0;i<m_ChildProcessMan.m_arrAttachDlgInfoData.GetSize();i++)
+		{
+			AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(i);
+			if(pData==NULL)continue;
+			bool bRet =pData->IsChildWindowLive();
+			if(!bRet)
+			{
+				m_wndFileView.SetItemTitle(pData->pTreePosItem,pData->GetTitle());
+			}
+		}
+	}
 	CMDIFrameWndEx::OnTimer(nIDEvent);
 }
 
@@ -579,3 +708,20 @@ int CMainFrame::GetCountCMDIChildWnds()
 	}   
 	return   count;  
 }
+
+void CMainFrame::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	//退出时通知程序正常退出。
+	if(IDNO ==AfxMessageBox(_T("Exit ProcessManager?"),MB_YESNO))
+		return;
+	AddBuildinfo(_T("User Exit ProcessManager."));
+	if(g_HookFunc_StopHook!=NULL)
+	{
+		g_HookFunc_StopHook();
+	}
+	m_ProcessMonitor.StopWork();
+	m_ChildProcessMan.StopAllWork();
+	CMDIFrameWndEx::OnClose();
+}
+

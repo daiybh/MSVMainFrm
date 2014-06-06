@@ -157,7 +157,7 @@ void CFileView::OnContextMenu(CWnd* pWnd, CPoint point)
 	}
 
 	//pWndTree->SetFocus();
-	theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
+	//theApp.GetContextMenuManager()->ShowPopupMenu(IDR_POPUP_EXPLORER, point.x, point.y, this, TRUE);
 }
 
 void CFileView::AdjustLayout()
@@ -180,8 +180,7 @@ void CFileView::AdjustLayout()
 
 void CFileView::OnProperties()
 {
-	AfxMessageBox(_T("ÊôÐÔ...."));
-
+	AfxGetMainWnd()->SendMessage(WM_USER+102,0x9999,0);
 }
 
 void CFileView::OnFileOpen()

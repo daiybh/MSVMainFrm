@@ -17,6 +17,7 @@ IMPLEMENT_DYNCREATE(CChildFrame, CMDIChildWndEx)
 
 BEGIN_MESSAGE_MAP(CChildFrame, CMDIChildWndEx)
 	ON_WM_CLOSE()
+	ON_WM_SYSCOMMAND()
 END_MESSAGE_MAP()
 
 // CChildFrame 构造/析构
@@ -65,4 +66,29 @@ void CChildFrame::OnClose()
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	this->ShowWindow(SW_MINIMIZE);
 	//CMDIChildWndEx::OnClose();
+}
+
+void CChildFrame::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CMDIChildWndEx::OnSysCommand(nID, lParam);
+	switch(nID)
+	{
+	case SC_MAXIMIZE:
+		//case SC_ZOOM:
+		{
+			//	break;
+		}
+	case SC_RESTORE:
+		{
+			AfxGetMainWnd()->SendMessage(WM_USER+101,WPARAM(this),0x8888);
+			//::SendMessage(GetActiveView()->m_hWnd,WM_SYSCOMMAND,nID,lParam);
+			break;
+		}
+	case SC_MINIMIZE:
+		//case SC_ICON:
+		{
+			break;
+		}
+	}
 }

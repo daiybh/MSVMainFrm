@@ -6,3 +6,9 @@
 #include "stdafx.h"
 
 
+//#include "MainFrm.h"
+void AddLog(LPCTSTR lpStrLog)
+{
+	//((CMainFrame*)AfxGetMainWnd())->AddBuildinfo(lpStrLog);
+	AfxGetMainWnd()->SendMessage(WM_USER+102,0x9898,(LPARAM)lpStrLog);
+}

@@ -45,6 +45,7 @@ local.properties
 [Dd]ebug_MDI/
 [Dd]ebug/
 [Rr]elease/
+[Rr]elease_MDI/
 x64/
 build/
 [Bb]in/

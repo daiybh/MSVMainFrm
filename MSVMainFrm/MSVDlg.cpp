@@ -7,13 +7,12 @@
 
 
 // CMSVDlg 对话框
-
+extern BOOL g_bMonitorRunning;
 IMPLEMENT_DYNAMIC(CMSVDlg, CDialog)
 
 CMSVDlg::CMSVDlg(CWnd* pParent /*=NULL*/)
 	: CDialog(CMSVDlg::IDD, pParent)
 {
-	m_strExePath = _T("");
 	m_bIsLoad    = FALSE;
 }
 
@@ -29,80 +28,53 @@ void CMSVDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CMSVDlg, CDialog)
 	ON_WM_CLOSE()
-	ON_WM_SIZE()
-	ON_WM_MOVE()
-	ON_WM_PAINT()
-	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
 // CMSVDlg 消息处理程序
 void CMSVDlg::OnClose()
 {
+	if(!g_bMonitorRunning)
+	{
+		CString strLog;
+		strLog.Format(_T("[%s][%s] OnClose"),this->GetTitle(),this->m_strExePath);
+		AddLog(strLog);
+		CloseDlg();	
+	}else
 	this->ShowWindow(SW_HIDE);
 	//CDialog::OnClose();
 }
 
-void CMSVDlg::OnSize(UINT nType, int cx, int cy)
-{
-	CDialog::OnSize(nType, cx, cy);
-
-	//	AdjustLayout();
-	// TODO: 在此处添加消息处理程序代码
-}
-
-
-
-
-void CMSVDlg::OnMove(int x, int y)
-{
-	__super::OnMove(x, y);
-
-	// TODO: 在此处添加消息处理程序代码
-//	SendMessage(WM_ERASEBKGND,0,0);
-//	SendMessage(WM_PAINT,0,0);
-//	Invalidate(TRUE);
-
-//	::SendMessage(m_hExeWnd,WM_ERASEBKGND,0,0);
-//	::SendMessage(m_hExeWnd,WM_PAINT,0,0);
-//	::RedrawWindow(m_hExeWnd);
-//	::InvalidateRect();
-//	UpdateWindow();
-}
-
-
-void CMSVDlg::OnPaint()
-{
-	CPaintDC dc(this); // device context for painting
-		// TODO: 在此处添加消息处理程序代码
-	// 不为绘图消息调用 __super::OnPaint()
-}
-
-
-void CMSVDlg::OnLButtonDblClk(UINT nFlags, CPoint point)
-{
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-	AfxGetMainWnd()->SendMessage(WM_USER+102,0x9898,(LPARAM)(LPCTSTR)_T("CMSVDlg::OnLButtonDblClk"));
-	AdjustLayout();
-	CRect attachWndRect,dlgRect;
-
-	CWnd* pAttachWnd = GetDlgItem(IDC_STATIC_ATTACHWND);
-	if(!pAttachWnd){pAttachWnd = this;}
-	pAttachWnd->GetClientRect(attachWndRect);
-	SetWindowPos(NULL, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+15, 0);
-	//::SetWindowPos(GetDlgItem(IDC_STATIC_ATTACHWND2)->m_hWnd,HWND_TOPMOST, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+15, 0);
-	__super::OnLButtonDblClk(nFlags, point);
-}
-
 BOOL CMSVDlg::AttachExeToWnd( LPCTSTR lpExePath,HWND hParentWnd,BOOL bAlwaysCreateProcess )
-{
-	CWnd* pAttachWnd = GetDlgItem(IDC_STATIC_ATTACHWND);
-	if(!pAttachWnd){pAttachWnd = this;}
-	HWND hAttachWnd = pAttachWnd->m_hWnd;
-	BOOL bRet =  __super::AttachExeToWnd(lpExePath,hAttachWnd,bAlwaysCreateProcess);
-	CRect attachWndRect,dlgRect;
-	::GetClientRect(hAttachWnd,attachWndRect);
-	SetWindowPos(NULL, 0,15, attachWndRect.Width()+10, attachWndRect.Height()+35, 0);
-	//::SetWindowPos(GetDlgItem(IDC_STATIC_ATTACHWND2)->m_hWnd,HWND_TOP, 5,19, attachWndRect.Width()+7, attachWndRect.Height()+30, SWP_DRAWFRAME);
+{		
+	BOOL bRet =  __super::AttachExeToWnd(lpExePath,(hParentWnd==NULL)?this->GetSafeHwnd():hParentWnd,bAlwaysCreateProcess);
+// 	CRect attachWndRect,dlgRect;
+// 	::GetClientRect(this->m_hWnd,attachWndRect);
 	return bRet;
+}
+
+void CMSVDlg::CloseDlg(BOOL bSilent/*=FALSE*/)
+{
+	if(!bSilent)
+	{
+		::SendMessage(m_hExeWnd,SC_CLOSE,0,0);
+		::SendMessage(m_hExeWnd,WM_CLOSE,0,0);
+	}
+	if(bSilent)
+	{
+		//::SendMessage(m_hExeWnd,);
+		::SendMessage(m_hExeWnd,WM_CHAR,13,0);
+		::SendMessage(m_hExeWnd, WM_KEYDOWN,VK_RETURN,0);
+	}
+}
+
+void CMSVDlg::ActiveWindow()
+{
+	if(IsWindow(this->m_hExeWnd))
+	{
+		int nShowCmd = SW_SHOWNA;
+		if(this->IsIconic())
+			nShowCmd = SW_SHOWNORMAL;
+		this->ShowWindow(nShowCmd);
+	}
 }
 

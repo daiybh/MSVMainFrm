@@ -58,3 +58,5 @@
 #endif
 
 
+void AddLog(LPCTSTR lpStrLog);
+

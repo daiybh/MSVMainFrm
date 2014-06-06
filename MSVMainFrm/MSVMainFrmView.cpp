@@ -44,6 +44,7 @@ BOOL CMSVMainFrmView::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: 在此处通过修改
 	//  CREATESTRUCT cs 来修改窗口类或样式
 
+	cs.style &= WS_VSCROLL |~WS_THICKFRAME;
 	return CFormView::PreCreateWindow(cs);
 }
 
@@ -107,7 +108,10 @@ void CMSVMainFrmView::OnActivateView(BOOL bActivate, CView* pActivateView, CView
 
 LRESULT CMSVMainFrmView::onResize( WPARAM wParam,LPARAM lParam )
 {
-	GetParentFrame()->RecalcLayout();
-	ResizeParentToFit(FALSE);
+	DWORD dWidth = (DWORD)wParam;
+	DWORD dHeight = (DWORD)lParam;
+
+	CSize sizeTotal(dWidth,dHeight);
+	SetScrollSizes(MM_LOENGLISH,sizeTotal);
 	return 1;
 }

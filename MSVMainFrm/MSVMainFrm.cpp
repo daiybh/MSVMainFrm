@@ -10,7 +10,7 @@
 #include "ChildFrm.h"
 #include "MSVMainFrmDoc.h"
 #include "MSVMainFrmView.h"
-
+#include "Dumps/mdump.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -61,6 +61,7 @@ BOOL CMSVMainFrmApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	CMiniDumper::SetExceptionFilter(MiniDumpWithFullMemory);
 	CWinAppEx::InitInstance();
 
 	// ≥ı ºªØ OLE ø‚

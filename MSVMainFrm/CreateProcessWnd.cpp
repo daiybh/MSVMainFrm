@@ -6,6 +6,9 @@
 CCreateProcessWnd::CCreateProcessWnd( void )
 {
 	m_bIsLoad= FALSE;
+	m_bAttachWnd_created = FALSE;
+	m_dwWidth = m_dwHeight = m_dwTop = m_dwLeft = 0;
+	m_strExePath = _T("");
 }
 
 
@@ -18,25 +21,30 @@ CCreateProcessWnd::CCreateProcess::EnumFunArg CCreateProcessWnd::CCreateProcess:
 	HWND  hExeWnd = NULL;
 	STARTUPINFO sa = {0};
 	sa.cb = sizeof(STARTUPINFO);
-	/*
-	sa.dwX= rect.left;
-	sa.dwY= rect.top;
-	sa.dwXSize=rect.Width();
-	sa.dwYSize=rect.Height();
-	/**/
 	sa.wShowWindow=SW_HIDE;
 	sa.dwFlags=STARTF_USEPOSITION | STARTF_USESIZE;            //設置了窗口坐标位置，窗口大小标志位有效，但是进程
 
+	int SleepTime = 2000;//GetPrivateProfileInt(_T("t"),_T("t"),100,_T("c:\\t.ini"));
 
 	PROCESS_INFORMATION pi = {0};
 	if(CreateProcess(strExePath,NULL,NULL,NULL,\
 		FALSE,CREATE_NEW_PROCESS_GROUP,NULL,NULL,&sa,&pi))
 	{
+		DWORD dwStartTime = GetTickCount();
 		if(WaitForInputIdle(pi.hProcess,INFINITE) == 0)
 		{
+			DWORD waitTIme = GetTickCount()-dwStartTime;
+			Sleep(SleepTime);
+			CString strLog;
+			strLog.Format(_T("wait---%s[%d,%d]"),strExePath,waitTIme,SleepTime);
+			AddLog(strLog);
+			//AfxMessageBox(strLog);
 			hExeWnd = GetWndByPID(pi.dwProcessId);                //通過GetWindowThreadProcessId()对比 dwPid,能成功；但是返回的窗口句柄 （HWND)错误，用调试语句 ::SetWindowText(hWnd,_T("1111111"));無法設置窗口標題
-			CloseHandle(pi.hThread);
-			CloseHandle(pi.hProcess);                                     
+			//CloseHandle(pi.hThread);
+			//CloseHandle(pi.hProcess);
+			if(sa.hStdInput)CloseHandle(sa.hStdInput);
+			if(sa.hStdOutput)CloseHandle(sa.hStdOutput);
+			if(sa.hStdError)CloseHandle(sa.hStdError);
 		}
 	}
 	EnumFunArg arg;
@@ -83,34 +91,38 @@ BOOL CCreateProcessWnd::AttachExeToWnd( LPCTSTR lpExePath,HWND hParentWnd,BOOL b
 	{
 		return FALSE;
 	}
+	m_strExePath = lpExePath;
 	CWnd *cWnd=CWnd::FromHandle(arg.hWnd);
 	//隐藏标题栏
-	CString strTemp;
 
-	cWnd->GetWindowText(strTemp);
-	strTitle.Format(_T("[%d]%s"),arg.dwProcessId,strTemp);
-	::SetWindowText(hParentWnd,_T(""));
-
+	cWnd->GetWindowText(strExeOrgTitle);
+	CString strTitle;
+	strTitle.Format(_T("[%d]%s"),arg.dwProcessId,strExeOrgTitle);
 	::SetWindowText(hParentWnd,strTitle);
 
+	CString strlog;
+	strlog.Format(_T("createProcess[%s]---%x exeWnd=%x hParentWnd=%x"),lpExePath,GetDesktopWindow(),arg.hWnd,hParentWnd);
+	AddLog(strlog);
+	/*
+	LONG lStyle = ::GetWindowLong(cWnd->m_hWnd,GWL_STYLE);
+	lStyle &=~WS_POPUP;
+	lStyle &=~WS_OVERLAPPED;
+	lStyle |=WS_CHILD;
+	::SetWindowLong(cWnd->m_hWnd,GWL_STYLE,lStyle);
+/**/
 	cWnd->ModifyStyle(WS_CAPTION,0);
 	//隐藏边框
-	//	cWnd->ModifyStyle(WS_THICKFRAME,1);
-	//MoveWindow(m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
+	cWnd->ModifyStyle(WS_THICKFRAME,1);
 	//显示对话框
-	::SetParent(arg.hWnd,hParentWnd);
+	::SetParent(cWnd->m_hWnd,hParentWnd);
 
 	m_hParentWnd = hParentWnd;
 	m_hExeWnd = arg.hWnd;
 	m_dwProcessId = arg.dwProcessId;
 
-
-	if(!m_bIsLoad)
-	{
-		m_bIsLoad=TRUE;
-		AdjustLayout(hParentWnd);
-	}
-
+	m_bIsLoad=TRUE;
+	AdjustLayout(hParentWnd);
+	m_bAttachWnd_created = TRUE;
 	return TRUE;
 }
 
@@ -132,19 +144,28 @@ void CCreateProcessWnd::AdjustLayout( HWND hParentWnd )
 	}
 	else
 	{
-		//			SetWindowPos(hParentWnd,NULL, m_exeRect.left+5, m_exeRect.top+5, m_exeRect.Width()+1-5, m_exeRect.Height()+10-5, 0);
-		SetWindowPos(hParentWnd,HWND_BOTTOM, 0,0, m_exeRect.Width()+10, m_exeRect.Height()+15, 0);
 		SetWindowPos(m_hExeWnd,HWND_BOTTOM, 0,0, m_exeRect.Width(), m_exeRect.Height(), SWP_NOACTIVATE);
+		if(!m_bAttachWnd_created)
+		{
+			SetWindowPos(hParentWnd,HWND_BOTTOM, m_dwLeft,m_dwTop, m_exeRect.Width(), m_exeRect.Height()+10, 0);
+		}
 
 	}
-	CRect rect2;
-	GetClientRect(hParentWnd,rect2);
-
+ 	GetWindowRect(hParentWnd,rect);
+	m_dwWidth = rect.Width();
+	m_dwHeight = rect.Height();
 	CString ss;
-	ss.Format(_T("bRectNull=%d DlgWndRect[%d,%d,%d,%d][%d,%d,%d,%d] exeRect[%d,%d,%d,%d]"),
+	ss.Format(_T("bRectNull=%d DlgWndRect[%d,%d,%d,%d] exeRect[%d,%d,%d,%d] left=%d,top=%d"),
 		bRectNull,
 		rect.left,rect.top,rect.Width(),rect.Height(),
-		rect2.left,rect2.top,rect2.Width(),rect2.Height(),
-		m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height());
-	AfxGetMainWnd()->SendMessage( WM_USER+102,0x9898,(LPARAM)(LPCTSTR)ss);
+		m_exeRect.left,m_exeRect.top,m_exeRect.Width(),m_exeRect.Height(),
+		m_dwLeft,m_dwTop);
+	AddLog(ss);
+}
+
+CString CCreateProcessWnd::GetTitle()
+{
+	CString strTitle;
+	strTitle.Format(_T("[%d]%s"),m_dwProcessId,strExeOrgTitle);
+	return strTitle;
 }
