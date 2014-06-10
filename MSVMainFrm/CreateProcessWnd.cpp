@@ -24,7 +24,7 @@ CCreateProcessWnd::CCreateProcess::EnumFunArg CCreateProcessWnd::CCreateProcess:
 	sa.wShowWindow=SW_HIDE;
 	sa.dwFlags=STARTF_USEPOSITION | STARTF_USESIZE;            //設置了窗口坐标位置，窗口大小标志位有效，但是进程
 
-	int SleepTime = 2000;//GetPrivateProfileInt(_T("t"),_T("t"),100,_T("c:\\t.ini"));
+	int SleepTime = GetPrivateProfileInt(_T("t"),_T("t"),100,_T("c:\\t.ini"));
 
 	PROCESS_INFORMATION pi = {0};
 	if(CreateProcess(strExePath,NULL,NULL,NULL,\
