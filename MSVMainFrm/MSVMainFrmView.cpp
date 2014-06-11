@@ -11,5 +11,6 @@ CMSVMainFrmView::~CMSVMainFrmView(void)
 
 void CMSVMainFrmView::OnInitialUpdate()
 {
+	//AfxMessageBox(_T("CMSVMainFrmView::OnInitialUpdate"));
 	__super::OnInitialUpdate();
 }
