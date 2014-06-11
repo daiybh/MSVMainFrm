@@ -24,27 +24,17 @@ CCreateProcessWnd::CCreateProcess::EnumFunArg CCreateProcessWnd::CCreateProcess:
 	sa.wShowWindow=SW_HIDE;
 	sa.dwFlags=STARTF_USEPOSITION | STARTF_USESIZE;            //設置了窗口坐标位置，窗口大小标志位有效，但是进程
 
-	int SleepTime = GetPrivateProfileInt(_T("t"),_T("t"),100,_T("c:\\t.ini"));
 
 	PROCESS_INFORMATION pi = {0};
 	if(CreateProcess(strExePath,NULL,NULL,NULL,\
 		FALSE,CREATE_NEW_PROCESS_GROUP,NULL,NULL,&sa,&pi))
 	{
-		DWORD dwStartTime = GetTickCount();
 		if(WaitForInputIdle(pi.hProcess,INFINITE) == 0)
 		{
-			DWORD waitTIme = GetTickCount()-dwStartTime;
-			Sleep(SleepTime);
-			CString strLog;
-			strLog.Format(_T("wait---%s[%d,%d]"),strExePath,waitTIme,SleepTime);
-			AddLog(strLog);
-			//AfxMessageBox(strLog);
+			Sleep(100);
 			hExeWnd = GetWndByPID(pi.dwProcessId);                //通過GetWindowThreadProcessId()对比 dwPid,能成功；但是返回的窗口句柄 （HWND)错误，用调试语句 ::SetWindowText(hWnd,_T("1111111"));無法設置窗口標題
-			//CloseHandle(pi.hThread);
-			//CloseHandle(pi.hProcess);
-			if(sa.hStdInput)CloseHandle(sa.hStdInput);
-			if(sa.hStdOutput)CloseHandle(sa.hStdOutput);
-			if(sa.hStdError)CloseHandle(sa.hStdError);
+			CloseHandle(pi.hThread);
+			CloseHandle(pi.hProcess);                                     
 		}
 	}
 	EnumFunArg arg;
@@ -100,21 +90,11 @@ BOOL CCreateProcessWnd::AttachExeToWnd( LPCTSTR lpExePath,HWND hParentWnd,BOOL b
 	strTitle.Format(_T("[%d]%s"),arg.dwProcessId,strExeOrgTitle);
 	::SetWindowText(hParentWnd,strTitle);
 
-	CString strlog;
-	strlog.Format(_T("createProcess[%s]---%x exeWnd=%x hParentWnd=%x"),lpExePath,GetDesktopWindow(),arg.hWnd,hParentWnd);
-	AddLog(strlog);
-	/*
-	LONG lStyle = ::GetWindowLong(cWnd->m_hWnd,GWL_STYLE);
-	lStyle &=~WS_POPUP;
-	lStyle &=~WS_OVERLAPPED;
-	lStyle |=WS_CHILD;
-	::SetWindowLong(cWnd->m_hWnd,GWL_STYLE,lStyle);
-/**/
 	cWnd->ModifyStyle(WS_CAPTION,0);
 	//隐藏边框
 	cWnd->ModifyStyle(WS_THICKFRAME,1);
 	//显示对话框
-	::SetParent(cWnd->m_hWnd,hParentWnd);
+	::SetParent(arg.hWnd,hParentWnd);
 
 	m_hParentWnd = hParentWnd;
 	m_hExeWnd = arg.hWnd;

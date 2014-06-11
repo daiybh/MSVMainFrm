@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "MSVMainFrm.h"
-#include "MSVMainFrmDoc.h"
+
 #include "MainFrm.h"
 
 #ifdef _DEBUG
@@ -502,10 +502,6 @@ LRESULT CMainFrame::onMsgAttachWnd( WPARAM wParam,LPARAM lParam )
 		}
 		return 1;
 	}
-	{
-		//遍历frame找到自己所属的groupview
-
-	}
 	CString strTitle;
 	CreateChildProcess(dId,strTitle,TRUE);
 	return 1;
@@ -520,7 +516,6 @@ void CMainFrame::OnButtonStop()
 	CString strLog;
 	strLog.Format(_T("%s-%d"),strStatusInfo[0],m_ProcessMonitor.GetMonitorStatus());
 	AddBuildinfo(strLog);
-	GetCountCMDIChildWnds();
 }
 void CMainFrame::OnUpdateButtonStop(CCmdUI *pCmdUI)
 {
@@ -658,7 +653,6 @@ void CMainFrame::OnTimer(UINT_PTR nIDEvent)
 	else if(nIDEvent==2)
 	{
 		//AddBuildinfo(m_ChildProcessMan.CheckWindow());
-		return;
 		for(int i=0;i<m_ChildProcessMan.m_arrAttachDlgInfoData.GetSize();i++)
 		{
 			AttachDlgInfoData*pData = m_ChildProcessMan.m_arrAttachDlgInfoData.GetAt(i);
@@ -703,56 +697,15 @@ CMDIChildWnd * CMainFrame::GetNextMDIChildWnd()
 
 int CMainFrame::GetCountCMDIChildWnds()
 {
+	return 0;
 	int   count   =   0;   
-CString strLog;
 
-	CDocManager *pDocManager = AfxGetApp()->m_pDocManager;
-	POSITION pos = pDocManager->GetFirstDocTemplatePosition();
-	while(pos){
-		CString strDocT;
-		CDocTemplate *pTemplate = (CDocTemplate*)pDocManager->GetNextDocTemplate(pos);
-		strDocT.Format(_T("[docT=%x]"),pTemplate);
-		POSITION pos1 =pTemplate->GetFirstDocPosition();
-		while(pos1){
-			CString strDoc;
-			CDocument *pDoc = pTemplate->GetNextDoc(pos1);
-			//通过title获取groupid
-			POSITION pos2 = pDoc->GetFirstViewPosition();
-			strDoc.Format(_T("[Doc %x]"),pDoc);
-			
-			while(pos2){
-				CString strView;
-				CView *pView = pDoc->GetNextView(pos2);
-				CFrameWnd *pFrame = pView->GetParentFrame();
-
-				{
-					int nGroupID =-1;
-					CString strTitle = pDoc->GetTitle();
-					int nPos = strTitle.ReverseFind('\\');
-					CString sTemp = strTitle.Mid(nPos+1);
-					nPos = sTemp.Find('@');				
-					nGroupID= _ttoi(sTemp.Mid(nPos+1));
-					m_ChildProcessMan.UpdateGroupFramewnd(nGroupID,pFrame);
-				}
-				//if(IsFra)
-				strView.Format(_T("[%d  pView=%x frame=%x]"),count++,pView,pFrame);				
-				strDoc+=strView;
-			}
-			strDocT+=strDoc;
-		}
-		strLog+=strDocT;
-	}
-	AddBuildinfo(strLog);
-	return count;
 	CMDIChildWnd*   pChild   =   GetNextMDIChildWnd();   
 	while   (pChild)   
 	{   
 		count++;   
 		pChild   =   GetNextMDIChildWnd();   
 	}   
-// 	CString strLog;
-// 	strLog.Format(_T("GetCountCMDIChildWnds==%d"),count);
-// 	AddBuildinfo(strLog);
 	return   count;  
 }
 

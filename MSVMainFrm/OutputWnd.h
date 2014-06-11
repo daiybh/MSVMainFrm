@@ -39,8 +39,7 @@ protected:
 	COutputList m_wndOutputBuild;
 protected:
 	void AdjustHorzScroll(CListBox& wndListBox);
-	virtual void OnPressCloseButton();	
-	virtual void OnSlide(BOOL bSlideOut);
+
 // й╣ож
 public:
 	virtual ~COutputWnd();

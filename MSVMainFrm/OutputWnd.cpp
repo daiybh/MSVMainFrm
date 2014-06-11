@@ -100,19 +100,6 @@ void COutputWnd::AddBuildinfo(LPCTSTR lpInfo)
 	m_wndOutputBuild.AddString(lpInfo);
 }
 
-void COutputWnd::OnPressCloseButton()
-{
-	__super::OnPressCloseButton();
-}
-
-void COutputWnd::OnSlide( BOOL bSlideOut )
-{
-	CString ss;
-	ss = _T("onSlide")+bSlideOut?_T("_t"):_T("_F");
-	AddBuildinfo(ss);
-	__super::OnSlide(bSlideOut);
-}
-
 
 /////////////////////////////////////////////////////////////////////////////
 // COutputList1

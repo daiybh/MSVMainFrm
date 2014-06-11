@@ -46,7 +46,7 @@ void CMSVDlg::OnClose()
 
 BOOL CMSVDlg::AttachExeToWnd( LPCTSTR lpExePath,HWND hParentWnd,BOOL bAlwaysCreateProcess )
 {		
-	BOOL bRet =  __super::AttachExeToWnd(lpExePath,(hParentWnd==NULL)?this->GetSafeHwnd():hParentWnd,bAlwaysCreateProcess);
+	BOOL bRet =  __super::AttachExeToWnd(lpExePath,this->m_hWnd,bAlwaysCreateProcess);
 // 	CRect attachWndRect,dlgRect;
 // 	::GetClientRect(this->m_hWnd,attachWndRect);
 	return bRet;

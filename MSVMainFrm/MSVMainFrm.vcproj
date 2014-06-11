@@ -350,18 +350,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\BaseView_FormView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BaseView_ScrollView.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\BaseView_View.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\ChildFrm.cpp"
 				>
 			</File>
@@ -471,18 +459,6 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
-			<File
-				RelativePath=".\BaseView_FormView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BaseView_ScrollView.h"
-				>
-			</File>
-			<File
-				RelativePath=".\BaseView_View.h"
-				>
-			</File>
 			<File
 				RelativePath=".\ChildFrm.h"
 				>

@@ -70,10 +70,6 @@ typedef struct tag_AttachDlgInfo{
 		return bWindow;
 	}
 	CString GetTitle(){return this->pAttachDlg->GetTitle();}
-	void UpdateGroupViewScroll()
-	{
-		SendMessage(this->hFrameWnd->GetActiveView()->m_hWnd,WM_USER+120,pstGroupInfo->dwTotalWidth,pstGroupInfo->dwTotalHeight);
-	}
 	void ActiveWindow(){
 		int nCmdShow = SW_SHOW;
 		if (this->hFrameWnd->IsIconic())
@@ -81,7 +77,8 @@ typedef struct tag_AttachDlgInfo{
 			nCmdShow = (SW_SHOWMAXIMIZED);
 		}
 		this->hFrameWnd->ActivateFrame(nCmdShow);
-		UpdateGroupViewScroll();
+
+		SendMessage(this->hFrameWnd->GetActiveView()->m_hWnd,WM_USER+120,pstGroupInfo->dwTotalWidth,pstGroupInfo->dwTotalHeight);
 		this->pAttachDlg->ActiveWindow();
 	}
 	DWORD GetProcessID(){return pAttachDlg?pAttachDlg->m_dwProcessId:0;}

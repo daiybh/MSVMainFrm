@@ -155,7 +155,7 @@ HTREEITEM CChildAttachDialogMan::CreateChildProcess( DWORD dwID,CWnd*pParentWnd,
 // 			pDlg->m_dwTop = pData->pstGroupInfo->nNextTop;
 			//pData->pstGroupInfo->GetNextPos(pDlg->m_dwLeft,pDlg->m_dwTop);
 			pData->pstGroupInfo->GetPos(pData->nInGroupPos,pDlg->m_dwLeft,pDlg->m_dwTop);
-			BOOL bRet = pDlg->AttachExeToWnd(pData->strExePath,NULL,bAlwaysCreateProcess);
+			BOOL bRet = pDlg->AttachExeToWnd(pData->strExePath,pDlg->m_hWnd,bAlwaysCreateProcess);
 			if(bRet)
 			{
 				strTitle= pDlg->GetTitle();
@@ -214,7 +214,7 @@ void CChildAttachDialogMan::UpdateGroupFramewnd( int nGroupID,CFrameWnd*pFrameWn
 		{
 			//收到view窗口还原，最大化消息，此时通知view更新他的scroll
 			if(pData->hFrameWnd == pFrameWnd){
-				pData->UpdateGroupViewScroll();
+				pData->ActiveWindow();
 			}
 		}
 		else
