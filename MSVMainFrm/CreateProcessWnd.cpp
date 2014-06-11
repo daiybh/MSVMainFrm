@@ -72,6 +72,10 @@ BOOL CCreateProcessWnd::AttachExeToWnd( LPCTSTR lpExePath,HWND hParentWnd,BOOL b
 		ShowWindow(m_hExeWnd,SW_SHOW);
 		return TRUE;
 	}
+	if(m_hExeWnd!=NULL)
+	{
+		SetParent(m_hExeWnd,NULL);
+	}
 	m_hExeWnd =NULL;
 	CRect rect;
 	GetClientRect(hParentWnd,rect);

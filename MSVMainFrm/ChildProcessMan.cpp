@@ -62,16 +62,24 @@ CChildAttachDialogMan::CChildAttachDialogMan(void)
 	BOOL bHadUnKnownGroupInfo=FALSE;
 	for (int i=0;i<processCount;i++)
 	{
-		AttachDlgInfoData *lpData = new AttachDlgInfoData;
 		TCHAR strTemp[255];
 		CString strAppName;
 		strAppName.Format(_T("process_%d"),i);
 		GetPrivateProfileString(strAppName,_T("path"),_T(""),strTemp,255,strIni);
 		//这里需要去掉路径中的多余斜杠
 		getRealPath(strTemp);
-		lpData->strExePath =  strTemp;
+		CString strExePath(strTemp);
+		if(strExePath.IsEmpty() || strExePath.GetLength()<3)//c:\1.exe
+		{		
+			continue;
+		}
+
 		GetPrivateProfileString(strAppName,_T("displayname"),_T(""),strTemp,255,strIni);
 		int nGroupID = GetPrivateProfileInt(strAppName,_T("groupID"),pUnKnownGroupInfo->nGroupID,strIni);
+
+		AttachDlgInfoData *lpData = new AttachDlgInfoData;
+
+		lpData->strExePath =  strExePath;
 
 		std::map<int ,stGroupInfo*>::iterator it ;
 		it = m_mapGroupInfo.find(nGroupID);
