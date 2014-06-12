@@ -578,7 +578,11 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_BUTTON_STOP          "受监控的程序退出后，不自动启动\n模式"
+    ID_BUTTON_STOP          "受监控的程序退出后，不自动启动\n自由模式"
+END
+
+STRINGTABLE 
+BEGIN
     ID_BUTTON_MONITOR       "防止程序的异常退出。\n监控模式"
 END
 
