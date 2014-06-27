@@ -155,21 +155,21 @@ END
 
 IDR_MAINFRAME MENU 
 BEGIN
-    POPUP "文件(&F)"
+    POPUP "File(&F)"
     BEGIN
-        MENUITEM "自由模式",                        ID_BUTTON_STOP
-        MENUITEM "监控模式",                        ID_BUTTON_MONITOR
+        MENUITEM "F(&F)ree Mode",                        ID_BUTTON_STOP
+        MENUITEM "M(&M)onitor model",                        ID_BUTTON_MONITOR
         MENUITEM SEPARATOR
-        MENUITEM "退出(&X)",                      ID_APP_EXIT
+        MENUITEM "Exit(&X)",                      ID_APP_EXIT
     END
-    POPUP "视图(&V)"
+    POPUP "View(&V)"
     BEGIN
-        POPUP "工具栏和停靠窗口(&T)"
+        POPUP "ToolBar(&T)"
         BEGIN
             MENUITEM "<占位符>",                       ID_VIEW_TOOLBAR
         END
-        MENUITEM "状态栏(&S)",                     ID_VIEW_STATUS_BAR
-        POPUP "应用程序外观(&A)"
+        MENUITEM "Status Bar(&S)",                     ID_VIEW_STATUS_BAR
+        POPUP "App Look(&A)"
         BEGIN
             MENUITEM "Windows 2000(&2)",            ID_VIEW_APPLOOK_WIN_2000
             MENUITEM "Office XP(&X)",               ID_VIEW_APPLOOK_OFF_XP
@@ -178,36 +178,36 @@ BEGIN
             MENUITEM "Visual Studio.NET 2005(&5)",  ID_VIEW_APPLOOK_VS_2005
             POPUP "Office 2007(&7)"
             BEGIN
-                MENUITEM "蓝色样式(&B)",                    ID_VIEW_APPLOOK_OFF_2007_BLUE
-                MENUITEM "黑色样式(&L)",                    ID_VIEW_APPLOOK_OFF_2007_BLACK
-                MENUITEM "银色样式(&S)",                    ID_VIEW_APPLOOK_OFF_2007_SILVER
-                MENUITEM "水绿色样式(&A)",                   ID_VIEW_APPLOOK_OFF_2007_AQUA
+                MENUITEM "Blue(&B)",                    ID_VIEW_APPLOOK_OFF_2007_BLUE
+                MENUITEM "Black(&L)",                    ID_VIEW_APPLOOK_OFF_2007_BLACK
+                MENUITEM "Silver(&S)",                    ID_VIEW_APPLOOK_OFF_2007_SILVER
+                MENUITEM "Aqua(&A)",                   ID_VIEW_APPLOOK_OFF_2007_AQUA
             END
         END
     END
-    POPUP "帮助(&H)"
+    POPUP "Help(&H)"
     BEGIN
-        MENUITEM "关于 MSVMainFrm(&A)...",        ID_APP_ABOUT
+        MENUITEM "About(&A)...",        ID_APP_ABOUT
     END
 END
 
 IDR_MSVMainFrmTYPE MENU 
 BEGIN
-    POPUP "文件(&F)"
+    POPUP "File(&F)"
     BEGIN
-        MENUITEM "自由模式",                        ID_BUTTON_STOP
-        MENUITEM "监控模式",                        ID_BUTTON_MONITOR
+         MENUITEM "F(&F)ree Mode",                        ID_BUTTON_STOP
+        MENUITEM "M(&M)onitor model",                        ID_BUTTON_MONITOR
         MENUITEM SEPARATOR
-        MENUITEM "退出(&X)",                      ID_APP_EXIT
+        MENUITEM "Exit(&X)",                      ID_APP_EXIT
     END
-    POPUP "视图(&V)"
+    POPUP "View(&V)"
     BEGIN
-        POPUP "工具栏和停靠窗口(&T)"
+        POPUP "ToolBar(&T)"
         BEGIN
             MENUITEM "<占位符>",                       ID_VIEW_TOOLBAR
         END
-        MENUITEM "状态栏(&S)",                     ID_VIEW_STATUS_BAR
-        POPUP "应用程序外观(&A)"
+        MENUITEM "Status Bar(&S)",                     ID_VIEW_STATUS_BAR
+        POPUP "App Look(&A)"
         BEGIN
             MENUITEM "Windows 2000(&2)",            ID_VIEW_APPLOOK_WIN_2000
             MENUITEM "Office XP(&X)",               ID_VIEW_APPLOOK_OFF_XP
@@ -216,23 +216,16 @@ BEGIN
             MENUITEM "Visual Studio.NET 2005(&5)",  ID_VIEW_APPLOOK_VS_2005
             POPUP "Office 2007(&7)"
             BEGIN
-                MENUITEM "蓝色样式(&B)",                    ID_VIEW_APPLOOK_OFF_2007_BLUE
-                MENUITEM "黑色样式(&L)",                    ID_VIEW_APPLOOK_OFF_2007_BLACK
-                MENUITEM "银色样式(&S)",                    ID_VIEW_APPLOOK_OFF_2007_SILVER
-                MENUITEM "水绿色样式(&A)",                   ID_VIEW_APPLOOK_OFF_2007_AQUA
+                MENUITEM "Blue(&B)",                    ID_VIEW_APPLOOK_OFF_2007_BLUE
+                MENUITEM "Black(&L)",                    ID_VIEW_APPLOOK_OFF_2007_BLACK
+                MENUITEM "Silver(&S)",                    ID_VIEW_APPLOOK_OFF_2007_SILVER
+                MENUITEM "Aqua(&A)",                   ID_VIEW_APPLOOK_OFF_2007_AQUA
             END
         END
     END
-    POPUP "窗口(&W)"
+    POPUP "Help(&H)"
     BEGIN
-        MENUITEM "新建窗口(&N)",                    ID_WINDOW_NEW
-        MENUITEM "层叠(&C)",                      ID_WINDOW_CASCADE
-        MENUITEM "平铺(&T)",                      ID_WINDOW_TILE_HORZ
-        MENUITEM "排列图标(&A)",                    ID_WINDOW_ARRANGE
-    END
-    POPUP "帮助(&H)"
-    BEGIN
-        MENUITEM "关于 MSVMainFrm(&A)...",        ID_APP_ABOUT
+        MENUITEM "About(&A)...",        ID_APP_ABOUT
     END
 END
 
@@ -278,19 +271,19 @@ IDR_OUTPUT_POPUP MENU
 BEGIN
     POPUP "弹出项"
     BEGIN
-        MENUITEM "复制(&C)",                      ID_EDIT_COPY
-        MENUITEM "清除(&C)",                      ID_EDIT_CLEAR
+        MENUITEM "Copy(&C)",                      ID_EDIT_COPY
+        MENUITEM "Clear(&C)",                      ID_EDIT_CLEAR
         MENUITEM SEPARATOR
-        MENUITEM "隐藏(&H)",                      ID_VIEW_OUTPUTWND
+        MENUITEM "Hide(&H)",                      ID_VIEW_OUTPUTWND
     END
 END
 
 IDR_THEME_MENU MENU 
 BEGIN
-    MENUITEM "Office 2007 (蓝色样式)(&B)",      ID_VIEW_APPLOOK_OFF_2007_BLUE
-    MENUITEM "Office 2007 (黑色样式)(&L)",      ID_VIEW_APPLOOK_OFF_2007_BLACK
-    MENUITEM "Office 2007 (银色样式)(&S)",      ID_VIEW_APPLOOK_OFF_2007_SILVER
-    MENUITEM "Office 2007 (水绿色样式)(&A)",     ID_VIEW_APPLOOK_OFF_2007_AQUA
+    MENUITEM "Office 2007 (Blue)(&B)",      ID_VIEW_APPLOOK_OFF_2007_BLUE
+    MENUITEM "Office 2007 (Black)(&L)",      ID_VIEW_APPLOOK_OFF_2007_BLACK
+    MENUITEM "Office 2007 (Silver)(&S)",      ID_VIEW_APPLOOK_OFF_2007_SILVER
+    MENUITEM "Office 2007 (Aqua)(&A)",     ID_VIEW_APPLOOK_OFF_2007_AQUA
 END
 
 
@@ -324,13 +317,13 @@ END
 
 IDD_ABOUTBOX DIALOGEX 0, 0, 170, 62
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "关于 MSVMainFrm"
+CAPTION "About"
 FONT 9, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,14,14,21,20
-    LTEXT           "MSVMainFrm，1.0 版",IDC_STATIC,42,14,114,8,SS_NOPREFIX
+    LTEXT           "ProcessMonitor，v1.0",IDC_STATIC,42,14,114,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2014",IDC_STATIC,42,26,114,8
-    DEFPUSHBUTTON   "确定",IDOK,113,41,50,14,WS_GROUP
+    DEFPUSHBUTTON   "OK",IDOK,113,41,50,14,WS_GROUP
 END
 
 IDD_MSVDLG DIALOGEX 0, 0, 251, 176
@@ -368,13 +361,13 @@ BEGIN
     BEGIN
         BLOCK "080403a8"
         BEGIN
-            VALUE "CompanyName", "TODO: <公司名>"
-            VALUE "FileDescription", "TODO: <文件说明>"
+            VALUE "CompanyName", "Sobey,Inc.."
+            VALUE "FileDescription", ""
             VALUE "FileVersion", "1.0.0.1"
             VALUE "InternalName", "MSVMainFrm.exe"
-            VALUE "LegalCopyright", "TODO: (C) <公司名>。保留所有权利。"
+            VALUE "LegalCopyright", "(C) Sobey."
             VALUE "OriginalFilename", "MSVMainFrm.exe"
-            VALUE "ProductName", "TODO: <产品名>"
+            VALUE "ProductName", "Process Monitor"
             VALUE "ProductVersion", "1.0.0.1"
         END
     END
@@ -432,13 +425,13 @@ STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "MSVMainFrm"
     IDR_MSVMainFrmTYPE      "\nMSVMainFrm\nMSVMainFrm\n\n\nMSVMainFrm.Document\nMSVMainFrm.Document"
-    IDS_WINDOWS_MANAGER     "窗口(&W)..."
+    IDS_WINDOWS_MANAGER     "Windows(&W)..."
 END
 
 STRINGTABLE 
 BEGIN
     AFX_IDS_APP_TITLE       "MSVMainFrm"
-    AFX_IDS_IDLEMESSAGE     "就绪"
+    AFX_IDS_IDLEMESSAGE     "IDLE"
 END
 
 STRINGTABLE 
@@ -463,13 +456,13 @@ END
 
 STRINGTABLE 
 BEGIN
-    IDS_CLOSE               "关闭"
+    IDS_CLOSE               "Close"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_APP_ABOUT            "显示程序信息、版本号和版权\n关于"
-    ID_APP_EXIT             "退出应用程序\n退出"
+    ID_APP_ABOUT            "ShowAppInfo\nAbout"
+    ID_APP_EXIT             "Exit Application\nExit"
 END
 
 STRINGTABLE 
@@ -550,23 +543,23 @@ STRINGTABLE
 BEGIN
     IDS_STATUS_PANE1        "窗格 1"
     IDS_STATUS_PANE2        "窗格 2"
-    IDS_TOOLBAR_STANDARD    "标准"
-    IDS_TOOLBAR_CUSTOMIZE   "自定义..."
+    IDS_TOOLBAR_STANDARD    "Standard"
+    IDS_TOOLBAR_CUSTOMIZE   "Customize..."
 END
 
 STRINGTABLE 
 BEGIN
     IDS_MSV_SDI             "ProcessGroup"
     IDS_MSV_IP              "IP/Stream"
-    IDS_OUTPUT_WND          "输出"
-    IDS_FILE_VIEW           "文件视图"
-    IDS_CLASS_VIEW          "类视图"
+    IDS_OUTPUT_WND          "OutPut Info"
+    IDS_FILE_VIEW           "File View"
+    IDS_CLASS_VIEW          "Class View"
 END
 
 STRINGTABLE 
 BEGIN
-    IDS_EXPLORER            "资源管理器"
-    IDS_EDIT_MENU           "编辑"
+    IDS_EXPLORER            "Explorer"
+    IDS_EDIT_MENU           "Edit"
 END
 
 STRINGTABLE 
@@ -578,12 +571,12 @@ END
 
 STRINGTABLE 
 BEGIN
-    ID_BUTTON_STOP          "受监控的程序退出后，不自动启动\n自由模式"
+    ID_BUTTON_STOP          "By monitoring the program exits, does not start automatically\nFree Mode"
 END
 
 STRINGTABLE 
 BEGIN
-    ID_BUTTON_MONITOR       "防止程序的异常退出。\n监控模式"
+    ID_BUTTON_MONITOR       "Abnormal exit prevention program\nMonitor Mode"
 END
 
 #endif    // 中文(中华人民共和国) resources

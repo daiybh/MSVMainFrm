@@ -84,7 +84,7 @@
 #define IDC_STATIC_ATTACHWND            1003
 #define IDC_STATIC_ATTACHWND2           1005
 #define IDC_EDIT1                       1006
-#define ID_Menu                         32771
+#define ID_Menu                         1009
 #define ID_BUTTON_STOP                  1007
 #define ID_BUTTON_MONITOR               1008
 
@@ -94,7 +94,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        313
 #define _APS_NEXT_COMMAND_VALUE         32780
-#define _APS_NEXT_CONTROL_VALUE         1007
+#define _APS_NEXT_CONTROL_VALUE         1010
 #define _APS_NEXT_SYMED_VALUE           311
 #endif
 #endif
