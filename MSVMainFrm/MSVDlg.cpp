@@ -75,7 +75,6 @@ void CMSVDlg::ActiveWindow()
 		if(this->IsIconic())
 			nShowCmd = SW_SHOWNORMAL;
 		this->ShowWindow(nShowCmd);
-		this->SetFocus();
 	}
 }
 
