@@ -110,8 +110,18 @@ LRESULT CMSVMainFrmView::onResize( WPARAM wParam,LPARAM lParam )
 {
 	DWORD dWidth = (DWORD)wParam;
 	DWORD dHeight = (DWORD)lParam;
-
-	CSize sizeTotal(dWidth,dHeight);
-	SetScrollSizes(MM_LOENGLISH,sizeTotal);
+	if(dWidth ==99999)
+	{
+		POINT pt;
+		pt.x = GetScrollPos(SB_HORZ);
+		pt.y = GetScrollPos(SB_VERT);
+		pt.y = dHeight;
+		ScrollToPosition(pt);
+	}
+	else
+	{
+		CSize sizeTotal(dWidth,dHeight);
+		SetScrollSizes(MM_TEXT,sizeTotal);
+	}
 	return 1;
 }

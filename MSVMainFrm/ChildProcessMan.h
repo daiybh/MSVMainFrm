@@ -70,17 +70,7 @@ typedef struct tag_AttachDlgInfo{
 		return bWindow;
 	}
 	CString GetTitle(){return this->pAttachDlg->GetTitle();}
-	void ActiveWindow(){
-		int nCmdShow = SW_SHOW;
-		if (this->hFrameWnd->IsIconic())
-		{
-			nCmdShow = (SW_SHOWMAXIMIZED);
-		}
-		this->hFrameWnd->ActivateFrame(nCmdShow);
-
-		SendMessage(this->hFrameWnd->GetActiveView()->m_hWnd,WM_USER+120,pstGroupInfo->dwTotalWidth,pstGroupInfo->dwTotalHeight);
-		this->pAttachDlg->ActiveWindow();
-	}
+	void ActiveWindow();
 	DWORD GetProcessID(){return pAttachDlg?pAttachDlg->m_dwProcessId:0;}
 	
 	tag_AttachDlgInfo(){

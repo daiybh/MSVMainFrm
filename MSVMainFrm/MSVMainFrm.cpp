@@ -61,6 +61,19 @@ BOOL CMSVMainFrmApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	CString strTmp;
+	strTmp.Format(_T("CMSVMainFrmApp_InitInstance_RunOnce_Mutex_"));
+	HANDLE hMutex = INVALID_HANDLE_VALUE;
+	hMutex=OpenMutex(MUTEX_ALL_ACCESS,FALSE,strTmp);
+	if(hMutex != NULL)
+	{
+		CloseHandle(hMutex);
+		return FALSE;
+	}
+	else
+	{
+		hMutex=CreateMutex(NULL,FALSE,strTmp);
+	}
 	CMiniDumper::SetExceptionFilter(MiniDumpWithFullMemory);
 	CWinAppEx::InitInstance();
 

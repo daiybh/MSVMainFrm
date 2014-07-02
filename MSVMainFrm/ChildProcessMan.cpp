@@ -286,3 +286,23 @@ tag_RectInfos::tag_RectInfos()
 	n_MaxColumns = 3;
 	dwTotalWidth = dwTotalHeight = 0;
 }
+
+void tag_AttachDlgInfo::ActiveWindow()
+{
+	int nCmdShow = SW_SHOW;
+	if (this->hFrameWnd->IsIconic())
+	{
+		nCmdShow = (SW_SHOWMAXIMIZED);
+	}
+	this->hFrameWnd->ActivateFrame(nCmdShow);
+
+	SendMessage(this->hFrameWnd->GetActiveView()->m_hWnd,WM_USER+120,pstGroupInfo->dwTotalWidth,pstGroupInfo->dwTotalHeight);
+	//
+
+	//this->pAttachDlg->m_dwLeft;
+	//this->pAttachDlg->m_dwTop;
+	SendMessage(this->hFrameWnd->GetActiveView()->m_hWnd,WM_USER+120,99999,this->pAttachDlg->m_dwTop);
+	//
+
+	this->pAttachDlg->ActiveWindow();
+}
