@@ -10,7 +10,6 @@
 #include "ChildFrm.h"
 #include "MSVMainFrmDoc.h"
 #include "MSVMainFrmView.h"
-#include "MSVMainFrmView_Base_ScrollView.h"
 #include "Dumps/mdump.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,6 +61,19 @@ BOOL CMSVMainFrmApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	CString strTmp;
+	strTmp.Format(_T("CMSVMainFrmApp_InitInstance_RunOnce_Mutex_"));
+	HANDLE hMutex = INVALID_HANDLE_VALUE;
+	hMutex=OpenMutex(MUTEX_ALL_ACCESS,FALSE,strTmp);
+	if(hMutex != NULL)
+	{
+		CloseHandle(hMutex);
+		return FALSE;
+	}
+	else
+	{
+		hMutex=CreateMutex(NULL,FALSE,strTmp);
+	}
 	CMiniDumper::SetExceptionFilter(MiniDumpWithFullMemory);
 	CWinAppEx::InitInstance();
 
@@ -99,7 +111,7 @@ BOOL CMSVMainFrmApp::InitInstance()
 	pDocTemplate = new CMultiDocTemplate(IDR_MSVMainFrmTYPE,
 		RUNTIME_CLASS(CMSVMainFrmDoc),
 		RUNTIME_CLASS(CChildFrame), // 自定义 MDI 子框架
-		RUNTIME_CLASS(CMSVMainFrmView_Base_ScrollView));
+		RUNTIME_CLASS(CMSVMainFrmView));
 #else
 	pDocTemplate = new CMultiDocTemplate(IDR_MSVMainFrmTYPE,
 		RUNTIME_CLASS(CMSVMainFrmDoc),
