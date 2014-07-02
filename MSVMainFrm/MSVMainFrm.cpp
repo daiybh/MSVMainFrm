@@ -10,6 +10,7 @@
 #include "ChildFrm.h"
 #include "MSVMainFrmDoc.h"
 #include "MSVMainFrmView.h"
+#include "MSVMainFrmView_Base_ScrollView.h"
 #include "Dumps/mdump.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -111,7 +112,7 @@ BOOL CMSVMainFrmApp::InitInstance()
 	pDocTemplate = new CMultiDocTemplate(IDR_MSVMainFrmTYPE,
 		RUNTIME_CLASS(CMSVMainFrmDoc),
 		RUNTIME_CLASS(CChildFrame), // 自定义 MDI 子框架
-		RUNTIME_CLASS(CMSVMainFrmView));
+		RUNTIME_CLASS(CMSVMainFrmView_Base_ScrollView));
 #else
 	pDocTemplate = new CMultiDocTemplate(IDR_MSVMainFrmTYPE,
 		RUNTIME_CLASS(CMSVMainFrmDoc),

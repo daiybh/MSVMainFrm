@@ -402,6 +402,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\MSVMainFrmView_Base_ScrollView.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\OutputWnd.cpp"
 				>
 			</File>
@@ -509,6 +513,10 @@
 			</File>
 			<File
 				RelativePath=".\MSVMainFrmView.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MSVMainFrmView_Base_ScrollView.h"
 				>
 			</File>
 			<File
